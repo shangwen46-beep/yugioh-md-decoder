@@ -1035,7 +1035,7 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
       btn.innerHTML = '<span class="spinner"></span> 計算中...';
       setTimeout(function(){
         var allTuples = window.__ALL_TUPLES__;
-        var top = computeEntropySuggestions(tuples, allTuples, 3);
+        var top = computeEntropySuggestions(tuples, allTuples, Math.min(3, tuples.length));
         out.innerHTML = "";
         var warn = document.createElement("div");
         warn.className = "hint";
