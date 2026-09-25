@@ -292,11 +292,17 @@ input:focus{ outline:2px solid var(--arcane); outline-offset:1px; }
 .advice-box.lvl-medium{ background:linear-gradient(135deg, rgba(139,107,255,0.18), rgba(139,107,255,0.05)); border-color:var(--arcane); }
 .advice-box.lvl-low{ background:rgba(255,255,255,0.03); border-color:var(--border-soft); color:var(--text-dim); }
 .advice-box.lvl-done{ background:linear-gradient(135deg, rgba(224,182,79,0.15), rgba(224,182,79,0.04)); border-color:var(--gold-dim); }
-.advice-box .tag{ display:block; font-size:1.05rem; letter-spacing:0.01em; font-weight:800; margin-bottom:6px; }
+.advice-box .tag{ display:flex; align-items:center; flex-wrap:wrap; gap:8px; font-size:1.05rem; letter-spacing:0.01em; font-weight:800; margin-bottom:6px; }
 .advice-box.lvl-strong .tag{ color:var(--bad); }
 .advice-box.lvl-medium .tag{ color:var(--arcane); }
 .advice-box.lvl-low .tag{ color:var(--text-dim); font-size:0.98rem; }
 .advice-box.lvl-done .tag{ color:var(--gold); }
+.advice-box .meter{ display:inline-flex; gap:4px; }
+.advice-box .meter i{ width:9px; height:9px; border-radius:50%; background:var(--border-soft); display:inline-block; font-style:normal; }
+.advice-box.lvl-low .meter i.on{ background:var(--text-dim); }
+.advice-box.lvl-medium .meter i.on{ background:var(--arcane); }
+.advice-box.lvl-strong .meter i.on{ background:var(--bad); }
+.advice-box .strength-label{ font-size:0.72rem; font-weight:700; letter-spacing:0.02em; opacity:0.85; padding:2px 8px; border-radius:999px; border:1px solid currentColor; }
 .spinner{ display:inline-block; width:12px;height:12px;border-radius:50%;
   border:2px solid var(--border); border-top-color:var(--gold); animation:spin 0.7s linear infinite; }
 @keyframes spin{ to{ transform:rotate(360deg); } }
@@ -938,35 +944,33 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
     return (EVENT_END_MS - Date.now()) / 86400000;
   }
 
+  // 3 段強度量表，數字越大越應該用掉提示；「已解出」不算在量表內
+  var HINT_LEVEL_META = {
+    low:    {tag:"可以先猜，提示留著", strength:"低", rank:1},
+    medium: {tag:"適合使用提示",       strength:"中", rank:2},
+    strong: {tag:"強烈建議：現在用提示", strength:"高", rank:3}
+  };
+
   function computeHintAdvice(ec, candidates, tuples){
     if(tuples.length <= 1){
       return {level:"done", tag:"已解出", text:"已經鎖定答案組合了，不需要再用提示。"};
     }
     var unresolved = FIELDS.filter(function(f){ return ec.known[f] === undefined; });
-    var base;
+    var level, text;
     if(unresolved.length === 1){
       var field = unresolved[0];
       var valSet = {};
       candidates.forEach(function(c){ valSet[c[field]] = true; });
       var m = Object.keys(valSet).length;
       var saved = ((m-1)/2).toFixed(1);
-      base = {
-        level: "strong",
-        tag: "強烈建議：現在用提示",
-        text: "只剩「" + FIELD_NAMES[field] + "」這1項未知，候選中有 " + m + " 種不同數值。這時提示 100% 會揭露這一項，直接鎖定答案；若靠盲猜（沒有高低方向提示），平均要多花約 " + saved + " 次猜測才能試出來。"
-      };
+      level = "strong";
+      text = "只剩「" + FIELD_NAMES[field] + "」這1項未知，候選中有 " + m + " 種不同數值。這時提示 100% 會揭露這一項，直接鎖定答案；若靠盲猜（沒有高低方向提示），平均要多花約 " + saved + " 次猜測才能試出來。";
     } else if(tuples.length > 30){
-      base = {
-        level: "medium",
-        tag: "適合使用提示",
-        text: "候選組合還有 " + tuples.length + " 組，範圍仍大。如果手上有庫存提示，這是使用的好時機，能有效加速收斂。"
-      };
+      level = "medium";
+      text = "候選組合還有 " + tuples.length + " 組，範圍仍大。如果手上有庫存提示，這是使用的好時機，能有效加速收斂，但還不到「非用不可」的程度。";
     } else {
-      base = {
-        level: "low",
-        tag: "可以先猜，提示留著",
-        text: "候選組合已經縮小到 " + tuples.length + " 組，靠猜測應該就能解決，提示可以留給之後更難的題目。"
-      };
+      level = "low";
+      text = "候選組合已經縮小到 " + tuples.length + " 組，靠猜測應該就能解決，提示可以留給之後更難的題目。";
     }
 
     // 活動快結束時，囤積策略的前提（省下的提示能留到下一輪用）不再成立，該提早花掉
@@ -975,12 +979,13 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
       var hasHints = state.remainingHints === null || state.remainingHints > 0;
       if(hasHints){
         var urgency = daysLeft <= 0 ? "活動已經結束或今天就要結束" : (daysLeft <= 1 ? "活動明天就結束" : "活動只剩不到 " + Math.ceil(daysLeft) + " 天");
-        base.text += " ⏰ " + urgency + "了，囤積提示換取「以後更需要時再用」的前提已經不成立——用不完的提示不會有下一輪可以留，建議這幾天積極花掉庫存，不用再像前面那樣保守。";
-        if(base.level === "low") base.level = "medium";
-        else if(base.level === "medium") base.level = "strong";
+        text += " ⏰ " + urgency + "了，囤積提示換取「以後更需要時再用」的前提已經不成立——用不完的提示不會有下一輪可以留，建議這幾天積極花掉庫存，不用再像前面那樣保守。";
+        if(level === "low") level = "medium";
+        else if(level === "medium") level = "strong";
       }
     }
-    return base;
+    // tag 一律照最終等級重新對應，確保等級被升級後文字也一致
+    return {level: level, tag: HINT_LEVEL_META[level].tag, text: text};
   }
 
   function renderHintAdvice(ec, candidates, tuples){
@@ -989,7 +994,15 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
     var adv = computeHintAdvice(ec, candidates, tuples);
     box.className = "advice-box lvl-" + adv.level;
     var stock = (typeof state.remainingHints === "number") ? "　（目前庫存提示：" + state.remainingHints + "）" : "";
-    box.innerHTML = '<span class="tag">' + adv.tag + '</span>' + adv.text + stock;
+    var meta = HINT_LEVEL_META[adv.level];
+    var scaleHtml = "";
+    if(meta){
+      var dots = "";
+      for(var i=1;i<=3;i++){ dots += '<i class="' + (i<=meta.rank ? 'on' : '') + '"></i>'; }
+      scaleHtml = '<span class="meter" title="提示建議強度：共3級，越多實心點越建議現在使用">' + dots + '</span>' +
+        '<span class="strength-label">強度 ' + meta.rank + '/3・' + meta.strength + '</span>';
+    }
+    box.innerHTML = '<span class="tag">' + adv.tag + scaleHtml + '</span>' + adv.text + stock;
   }
 
   function renderResult(){
