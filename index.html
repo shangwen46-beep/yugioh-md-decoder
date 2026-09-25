@@ -115,6 +115,16 @@ header p{ color:var(--text-dim); font-size:0.82rem; margin-top:6px; }
   :root:not([data-theme="light"]) .theme-toggle .moon{ display:block; }
 }
 
+.font-control{
+  position:absolute; top:2px; left:0;
+  display:flex; gap:4px;
+}
+.font-control button{
+  width:34px; height:34px; border-radius:8px; padding:0;
+  background:var(--surface); border:1px solid var(--border); color:var(--gold);
+  font-weight:800; font-size:0.78rem;
+}
+
 .panel{
   background: linear-gradient(180deg, var(--surface), var(--surface2));
   border:1px solid var(--border);
@@ -275,26 +285,45 @@ input:focus{ outline:2px solid var(--arcane); outline-offset:1px; }
 .num-input{ max-width:84px; width:84px; text-align:right; }
 
 .advice-box{
-  border-radius:12px; padding:12px 14px; margin-bottom:14px; font-size:0.82rem; line-height:1.55;
-  border:1px solid var(--border-soft);
+  border-radius:12px; padding:14px 16px; margin-bottom:14px; font-size:0.86rem; line-height:1.55;
+  border:1.5px solid var(--border-soft);
 }
 .advice-box.lvl-strong{ background:linear-gradient(135deg, rgba(255,109,122,0.18), rgba(255,109,122,0.05)); border-color:var(--bad); }
 .advice-box.lvl-medium{ background:linear-gradient(135deg, rgba(139,107,255,0.18), rgba(139,107,255,0.05)); border-color:var(--arcane); }
 .advice-box.lvl-low{ background:rgba(255,255,255,0.03); border-color:var(--border-soft); color:var(--text-dim); }
 .advice-box.lvl-done{ background:linear-gradient(135deg, rgba(224,182,79,0.15), rgba(224,182,79,0.04)); border-color:var(--gold-dim); }
-.advice-box .tag{ display:block; font-size:0.68rem; letter-spacing:0.06em; font-weight:700; margin-bottom:5px; }
+.advice-box .tag{ display:block; font-size:1.05rem; letter-spacing:0.01em; font-weight:800; margin-bottom:6px; }
 .advice-box.lvl-strong .tag{ color:var(--bad); }
 .advice-box.lvl-medium .tag{ color:var(--arcane); }
-.advice-box.lvl-low .tag{ color:var(--text-faint); }
+.advice-box.lvl-low .tag{ color:var(--text-dim); font-size:0.98rem; }
 .advice-box.lvl-done .tag{ color:var(--gold); }
 .spinner{ display:inline-block; width:12px;height:12px;border-radius:50%;
   border:2px solid var(--border); border-top-color:var(--gold); animation:spin 0.7s linear infinite; }
 @keyframes spin{ to{ transform:rotate(360deg); } }
 
 footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-top:20px; }
+
+@media (max-width: 460px){
+  body{ padding-inline:12px; }
+  header{ padding-block: 44px 18px; }
+  .font-control{ top:0; }
+  .theme-toggle{ top:0; width:34px; height:34px; }
+  header h1{ font-size:1.5rem; }
+  .panel{ padding:13px; }
+  .field-toggle-grid{ grid-template-columns:1fr; }
+  .search-row{ flex-direction:column; }
+  .query-link{ width:100%; padding:9px 0; }
+  .row{ flex-wrap:wrap; }
+  select{ max-width:100%; width:100%; text-align:left; margin-top:4px; }
+  .stat-row{ gap:8px; }
+}
 </style>
 
 <header>
+  <div class="font-control" id="fontControl">
+    <button type="button" id="fontMinus" aria-label="縮小字體">A−</button>
+    <button type="button" id="fontPlus" aria-label="放大字體">A+</button>
+  </div>
   <button class="theme-toggle" id="themeToggle" type="button" aria-label="切換亮/暗主題">
     <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M2 12h2M20 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"></path></svg>
     <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
@@ -356,7 +385,7 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
 <div class="panel">
   <div class="panel-title"><h2><span class="n">1</span>已知線索</h2></div>
   <div id="knownRows"></div>
-  <div class="hint">開局會直接給 1 項資訊；之後每天的提示會隨機補 1 項未知資訊。取得後在這裡設定對應數值即可。</div>
+  <div class="hint">開局會直接給 1 項資訊；之後每天的提示會隨機補 1 項未知資訊。取得後在這裡設定對應數值即可。若某項已經靠「猜測紀錄」確定下來，這裡會自動顯示並鎖住（灰色、標示「由猜測確定」），不用重複輸入。</div>
 </div>
 
 <div class="panel">
@@ -376,7 +405,7 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
       </div>
       <a class="query-link" href="https://salix5.github.io/query/" target="_blank" rel="noopener">查牌網 ↗</a>
     </div>
-    <div class="hint" style="margin-top:6px;">遊戲內卡名常跟資料庫翻譯不同、又不能複製，可以開查牌網用圖片/其他條件找到正確卡名。</div>
+    <div class="hint" style="margin-top:6px;">遊戲內卡名常跟資料庫翻譯不同，可以開查牌網用圖片/其他條件找到正確卡名。</div>
     <div id="pickedCardBox"></div>
     <div class="btnrow" style="margin-top:10px;">
       <button class="gold" id="confirmGuessBtn" disabled>確認加入猜測結果</button>
@@ -439,6 +468,30 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
       document.documentElement.setAttribute("data-theme", next);
       try{ localStorage.setItem("duel-decoder-theme", next); }catch(e){}
     });
+  }
+
+  // ---------- font size control ----------
+  var FONT_KEY = "duel-decoder-fontsize";
+  var FONT_MIN = 90, FONT_MAX = 170, FONT_STEP = 8, FONT_DEFAULT = 116;
+  var currentFontPct = FONT_DEFAULT;
+  function applyFontSize(pct){
+    pct = Math.max(FONT_MIN, Math.min(FONT_MAX, pct));
+    document.documentElement.style.fontSize = pct + "%";
+    try{ localStorage.setItem(FONT_KEY, String(pct)); }catch(e){}
+    currentFontPct = pct;
+    return pct;
+  }
+  function setupFontControl(){
+    var stored = null;
+    try{
+      var v = localStorage.getItem(FONT_KEY);
+      if(v) stored = parseInt(v, 10);
+    }catch(e){}
+    applyFontSize(stored || FONT_DEFAULT);
+    var minusBtn = document.getElementById("fontMinus");
+    var plusBtn = document.getElementById("fontPlus");
+    if(minusBtn) minusBtn.addEventListener("click", function(){ applyFontSize(currentFontPct - FONT_STEP); });
+    if(plusBtn) plusBtn.addEventListener("click", function(){ applyFontSize(currentFontPct + FONT_STEP); });
   }
 
   var FIELDS = ["type","attr","race","lv","atk","def"];
@@ -530,11 +583,13 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
   function renderKnownRows(){
     var wrap = document.getElementById("knownRows");
     wrap.innerHTML = "";
+    var ec = effectiveConstraints();
     FIELDS.forEach(function(f){
       var row = document.createElement("div");
       row.className = "row";
       var label = document.createElement("label");
-      label.textContent = FIELD_NAMES[f];
+      var deducedOnly = !state.known[f] && ec.known[f] !== undefined;
+      label.innerHTML = FIELD_NAMES[f] + (deducedOnly ? ' <span style="color:var(--arcane);font-size:0.78rem;">(由猜測確定)</span>' : '');
       var sel = document.createElement("select");
       var optUnknown = document.createElement("option");
       optUnknown.value = ""; optUnknown.textContent = "未知";
@@ -547,6 +602,11 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
         sel.appendChild(o);
       });
       if(!state.known[f]) sel.value = "";
+      if(deducedOnly){
+        sel.value = ec.known[f];
+        sel.disabled = true;
+        sel.title = "此欄位已由猜測紀錄確定，如需更改請修改對應的猜測結果";
+      }
       sel.addEventListener("change", function(){
         state.known[f] = sel.value || null;
         saveState();
@@ -873,35 +933,54 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
 
   var lastCandidates = [];
 
+  var EVENT_END_MS = new Date("2026-10-12T23:59:59+08:00").getTime();
+  function daysUntilEventEnd(){
+    return (EVENT_END_MS - Date.now()) / 86400000;
+  }
+
   function computeHintAdvice(ec, candidates, tuples){
     if(tuples.length <= 1){
       return {level:"done", tag:"已解出", text:"已經鎖定答案組合了，不需要再用提示。"};
     }
     var unresolved = FIELDS.filter(function(f){ return ec.known[f] === undefined; });
+    var base;
     if(unresolved.length === 1){
       var field = unresolved[0];
       var valSet = {};
       candidates.forEach(function(c){ valSet[c[field]] = true; });
       var m = Object.keys(valSet).length;
       var saved = ((m-1)/2).toFixed(1);
-      return {
+      base = {
         level: "strong",
         tag: "強烈建議：現在用提示",
         text: "只剩「" + FIELD_NAMES[field] + "」這1項未知，候選中有 " + m + " 種不同數值。這時提示 100% 會揭露這一項，直接鎖定答案；若靠盲猜（沒有高低方向提示），平均要多花約 " + saved + " 次猜測才能試出來。"
       };
-    }
-    if(tuples.length > 30){
-      return {
+    } else if(tuples.length > 30){
+      base = {
         level: "medium",
         tag: "適合使用提示",
         text: "候選組合還有 " + tuples.length + " 組，範圍仍大。如果手上有庫存提示，這是使用的好時機，能有效加速收斂。"
       };
+    } else {
+      base = {
+        level: "low",
+        tag: "可以先猜，提示留著",
+        text: "候選組合已經縮小到 " + tuples.length + " 組，靠猜測應該就能解決，提示可以留給之後更難的題目。"
+      };
     }
-    return {
-      level: "low",
-      tag: "可以先猜，提示留著",
-      text: "候選組合已經縮小到 " + tuples.length + " 組，靠猜測應該就能解決，提示可以留給之後更難的題目。"
-    };
+
+    // 活動快結束時，囤積策略的前提（省下的提示能留到下一輪用）不再成立，該提早花掉
+    var daysLeft = daysUntilEventEnd();
+    if(daysLeft <= 3){
+      var hasHints = state.remainingHints === null || state.remainingHints > 0;
+      if(hasHints){
+        var urgency = daysLeft <= 0 ? "活動已經結束或今天就要結束" : (daysLeft <= 1 ? "活動明天就結束" : "活動只剩不到 " + Math.ceil(daysLeft) + " 天");
+        base.text += " ⏰ " + urgency + "了，囤積提示換取「以後更需要時再用」的前提已經不成立——用不完的提示不會有下一輪可以留，建議這幾天積極花掉庫存，不用再像前面那樣保守。";
+        if(base.level === "low") base.level = "medium";
+        else if(base.level === "medium") base.level = "strong";
+      }
+    }
+    return base;
   }
 
   function renderHintAdvice(ec, candidates, tuples){
@@ -1127,6 +1206,7 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
 
   function init(){
     setupThemeToggle();
+    setupFontControl();
     loadState();
     fetch("cards.json").then(function(r){ return r.json(); }).then(function(data){
       data.forEach(function(c){ c.type = normalizeGameType(c.type); });
