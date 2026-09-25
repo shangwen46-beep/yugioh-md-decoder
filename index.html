@@ -971,13 +971,24 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
     var unresolved = FIELDS.filter(function(f){ return ec.known[f] === undefined; });
     var level, text;
     if(unresolved.length === 1){
+      // 只剩1項未知時，提示100%能揭露答案，但「值不值得」要看盲猜省下的次數夠不夠多，
+      // 不是只要剩1項未知就一定該馬上用掉提示（候選只剩2、3種時，猜測本來就很便宜）。
       var field = unresolved[0];
       var valSet = {};
       candidates.forEach(function(c){ valSet[c[field]] = true; });
       var m = Object.keys(valSet).length;
       var saved = ((m-1)/2).toFixed(1);
-      level = "strong";
-      text = "只剩「" + FIELD_NAMES[field] + "」這1項未知，候選中有 " + m + " 種不同數值。這時提示 100% 會揭露這一項，直接鎖定答案；若靠盲猜（沒有高低方向提示），平均要多花約 " + saved + " 次猜測才能試出來。";
+      var worst = m - 1;
+      if(m <= 2){
+        level = "low";
+        text = "只剩「" + FIELD_NAMES[field] + "」這1項未知，但候選只有 " + m + " 種不同數值，直接猜其中一張，最差也只要再多猜 " + worst + " 次就能鎖定答案，不需要為了省這一點猜測次數動用提示，可以留到候選數更多的題目再用。";
+      } else if(m <= 5){
+        level = "medium";
+        text = "只剩「" + FIELD_NAMES[field] + "」這1項未知，候選中有 " + m + " 種不同數值。提示 100% 會直接揭露答案；靠盲猜平均要多花約 " + saved + " 次、最差要多花 " + worst + " 次猜測，如果猜測次數還算充裕可以先猜，庫存提示多的話現在用也划算。";
+      } else {
+        level = "strong";
+        text = "只剩「" + FIELD_NAMES[field] + "」這1項未知，候選中有 " + m + " 種不同數值，靠盲猜最差要多花 " + worst + " 次猜測。這時提示 100% 會揭露這一項，直接鎖定答案，非常划算。";
+      }
     } else if(tuples.length > 30){
       level = "medium";
       text = "候選組合還有 " + tuples.length + " 組，範圍仍大。如果手上有庫存提示，這是使用的好時機，能有效加速收斂，但還不到「非用不可」的程度。";
