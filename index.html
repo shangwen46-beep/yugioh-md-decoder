@@ -518,6 +518,14 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
     return "通常";
   }
 
+  // 個別卡片資料校正：資料庫「種類」欄位標成 靈擺/效果，但實測遊戲內的猜卡活動把它歸類在「通常」
+  // （很可能是本體其實是無效果的靈擺通常怪獸，資料庫標籤有誤），依使用者實測回報持續更新此表。
+  var TYPE_CORRECTIONS = {
+    33656832: "通常", // 曲藝的魔術師
+    45591967: "通常", // 娛樂夥伴 額外射手
+    64450427: "通常"  // 娛樂夥伴 妙想魔女
+  };
+
   var state = {
     round: 1,
     known: {type:null, attr:null, race:null, lv:null, atk:null, def:null},
@@ -1229,7 +1237,7 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
     setupFontControl();
     loadState();
     fetch("cards.json").then(function(r){ return r.json(); }).then(function(data){
-      data.forEach(function(c){ c.type = normalizeGameType(c.type); });
+      data.forEach(function(c){ c.type = TYPE_CORRECTIONS[c.id] || normalizeGameType(c.type); });
       CARDS = data;
       CARDS.forEach(function(c){ byId[c.id] = c; });
       buildOptions();
