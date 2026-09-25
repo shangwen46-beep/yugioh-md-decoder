@@ -504,11 +504,18 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
   var FIELD_NAMES = {type:"類型", attr:"屬性", race:"種族", lv:"星級/階級/連結數", atk:"攻擊力", def:"守備力"};
 
   // 卡片資料集裡存在、但實測發現尚未實裝在 Master Duel 猜卡活動卡池裡的卡（依使用者回報持續更新）
-  // 遊戲的「類型」猜測只看骨架分類（通常/效果/融合/儀式/同步/超量/連結），
-  // 靈擺(鐘擺)只是附加屬性、不會被單獨視為一種類型；靈擺怪獸一律歸到它本體的類型。
-  // 例如「靈擺/效果」在遊戲裡就是「效果」，「融合/靈擺/效果」就是「融合/效果」。
+  // 遊戲的「類型」猜測只會落在 7 種骨架分類之一：融合/儀式/同步/超量/連結/效果/通常。
+  // 一張卡若同時具備特殊召喚類型（融合/儀式/同步/超量/連結）與 效果，遊戲只會顯示特殊召喚類型，
+  // 例如「融合/效果」在遊戲裡就是「融合」，不是「效果」；同理「儀式/效果」是「儀式」。
+  // 靈擺(鐘擺)只是附加屬性、不會被單獨視為一種類型也不影響上述判斷，一律直接忽略，
+  // 例如「靈擺/效果」在遊戲裡是「效果」，「融合/靈擺/效果」在遊戲裡是「融合」。
+  var TYPE_PRIORITY = ["融合", "儀式", "同步", "超量", "連結"];
   function normalizeGameType(t){
-    return t.replace("靈擺/", "");
+    for(var i=0;i<TYPE_PRIORITY.length;i++){
+      if(t.indexOf(TYPE_PRIORITY[i]) !== -1) return TYPE_PRIORITY[i];
+    }
+    if(t.indexOf("效果") !== -1) return "效果";
+    return "通常";
   }
 
   var state = {
