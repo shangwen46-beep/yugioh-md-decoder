@@ -1,0 +1,1085 @@
+<title>決鬥解碼盤</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#f6f3ea;
+  --surface:#ffffff;
+  --surface2:#f3ecda;
+  --border:#e1d6b8;
+  --border-soft:#ece4cd;
+  --text:#2c2640;
+  --text-dim:#655c85;
+  --text-faint:#948bab;
+  --gold:#a9761c;
+  --gold-shine:#c9962f;
+  --gold-dim:#8a742f;
+  --arcane:#6a4de0;
+  --good:#188a4d;
+  --bad:#c8324a;
+  --unknown:#c9c0e0;
+  --accent-glow: rgba(106,77,224,0.08);
+  --shadow-inset: rgba(255,255,255,0.7);
+  --shadow-outer: rgba(60,50,20,0.12);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0d0c17;
+    --surface:#161428;
+    --surface2:#1e1b38;
+    --border:#33305c;
+    --border-soft:#2a274a;
+    --text:#ece8fb;
+    --text-dim:#a49bd6;
+    --text-faint:#726a9c;
+    --gold:#e0b64f;
+    --gold-shine:#f5dfa0;
+    --gold-dim:#8a742f;
+    --arcane:#8b6bff;
+    --good:#4fd888;
+    --bad:#ff6d7a;
+    --unknown:#4a4670;
+    --accent-glow: rgba(139,107,255,0.16);
+    --shadow-inset: rgba(255,255,255,0.03);
+    --shadow-outer: rgba(0,0,0,0.6);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0d0c17;
+  --surface:#161428;
+  --surface2:#1e1b38;
+  --border:#33305c;
+  --border-soft:#2a274a;
+  --text:#ece8fb;
+  --text-dim:#a49bd6;
+  --text-faint:#726a9c;
+  --gold:#e0b64f;
+  --gold-shine:#f5dfa0;
+  --gold-dim:#8a742f;
+  --arcane:#8b6bff;
+  --good:#4fd888;
+  --bad:#ff6d7a;
+  --unknown:#4a4670;
+  --accent-glow: rgba(139,107,255,0.16);
+  --shadow-inset: rgba(255,255,255,0.03);
+  --shadow-outer: rgba(0,0,0,0.6);
+  color-scheme: dark;
+}
+*{box-sizing:border-box;}
+body{
+  background:
+    radial-gradient(ellipse 900px 500px at 50% -10%, var(--accent-glow), transparent 60%),
+    var(--bg);
+  color:var(--text);
+  font-family:'Inter',system-ui,sans-serif;
+  padding-inline:16px;
+  padding-block: 24px 48px;
+  max-width: 640px;
+  margin: 0 auto;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+h1,h2,h3{font-family:'Cinzel',serif; margin:0; text-wrap:balance;}
+.tabular{font-variant-numeric: tabular-nums;}
+
+header{ text-align:center; padding-block: 8px 22px; position:relative; }
+header h1{
+  font-size: 1.7rem;
+  font-weight:700;
+  background: linear-gradient(135deg, var(--gold), var(--gold-shine) 45%, var(--gold));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  letter-spacing: 0.02em;
+}
+header p{ color:var(--text-dim); font-size:0.82rem; margin-top:6px; }
+
+.disclaimer{
+  font-size:0.72rem; line-height:1.5; color:var(--text-faint);
+  background:var(--surface2); border:1px solid var(--border-soft); border-radius:10px;
+  padding:9px 12px; margin-bottom:16px; text-align:center;
+}
+
+.theme-toggle{
+  position:absolute; top:2px; right:0;
+  display:inline-flex; align-items:center; justify-content:center;
+  width:36px; height:36px; border-radius:50%;
+  background:var(--surface); border:1px solid var(--border); color:var(--gold);
+  padding:0; cursor:pointer;
+}
+.theme-toggle svg{ width:18px; height:18px; }
+.theme-toggle .moon{ display:none; }
+:root[data-theme="dark"] .theme-toggle .sun{ display:none; }
+:root[data-theme="dark"] .theme-toggle .moon{ display:block; }
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .theme-toggle .sun{ display:none; }
+  :root:not([data-theme="light"]) .theme-toggle .moon{ display:block; }
+}
+
+.panel{
+  background: linear-gradient(180deg, var(--surface), var(--surface2));
+  border:1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 0 var(--shadow-inset) inset, 0 8px 24px -12px var(--shadow-outer);
+}
+.panel-title{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:12px;
+}
+.panel-title h2{
+  font-size:0.95rem; color:var(--gold); letter-spacing:0.04em;
+  display:flex; align-items:center; gap:8px;
+}
+.panel-title h2 .n{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:22px;height:22px;border-radius:6px;
+  background:rgba(224,182,79,0.12); border:1px solid var(--gold-dim);
+  font-family:'Inter'; font-size:0.72rem; color:var(--gold);
+}
+
+.row{ display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding-block:8px; border-bottom:1px solid var(--border-soft); }
+.row:last-child{border-bottom:none;}
+.row label{ font-size:0.85rem; color:var(--text-dim); flex-shrink:0; }
+
+select{
+  background:var(--surface); color:var(--text); border:1px solid var(--border);
+  border-radius:8px; padding:7px 10px; font-size:0.85rem; font-family:inherit;
+  max-width: 58%; text-align:right;
+}
+select:focus{ outline:2px solid var(--arcane); outline-offset:1px; }
+
+.chips{ display:flex; flex-wrap:wrap; gap:6px; }
+.chip{
+  display:inline-flex; align-items:center; gap:5px;
+  background:rgba(139,107,255,0.12); border:1px solid rgba(139,107,255,0.35);
+  color:var(--text); border-radius:999px; padding:4px 10px; font-size:0.76rem;
+}
+.chip b{color:var(--gold); font-weight:600;}
+.chip.empty{ color:var(--text-faint); border-style:dashed; background:transparent; }
+
+button{
+  font-family:inherit; cursor:pointer; border-radius:9px; border:1px solid var(--border);
+  background:var(--surface); color:var(--text); padding:9px 14px; font-size:0.85rem;
+  transition: transform 0.1s ease, border-color 0.15s ease;
+}
+button:active{ transform: scale(0.97); }
+button.primary{
+  background: linear-gradient(135deg, #6a4de0, var(--arcane));
+  border-color: transparent; color:#fff; font-weight:600;
+}
+button.gold{
+  background: linear-gradient(135deg, #8a742f, var(--gold));
+  border-color: transparent; color:#241d05; font-weight:700;
+}
+button.ghost{ background:transparent; color:var(--text-dim); }
+button:disabled{ opacity:0.4; cursor:not-allowed; }
+.btnrow{ display:flex; gap:8px; flex-wrap:wrap; }
+
+input[type=text], input[type=number]{
+  background:var(--surface); color:var(--text); border:1px solid var(--border);
+  border-radius:8px; padding:9px 11px; font-size:0.88rem; font-family:inherit; width:100%;
+}
+input:focus{ outline:2px solid var(--arcane); outline-offset:1px; }
+
+.search-wrap{ position:relative; }
+.dropdown{
+  position:absolute; top:calc(100% + 4px); left:0; right:0; z-index:5;
+  background:var(--surface2); border:1px solid var(--border); border-radius:10px;
+  max-height:220px; overflow-y:auto; box-shadow:0 12px 30px -10px rgba(0,0,0,0.7);
+}
+.dropdown div{ padding:9px 12px; font-size:0.85rem; border-bottom:1px solid var(--border-soft); cursor:pointer; }
+.dropdown div:last-child{border-bottom:none;}
+.dropdown div:hover, .dropdown div.hi{ background:rgba(139,107,255,0.15); }
+.dropdown .empty{ color:var(--text-faint); cursor:default; }
+
+.picked-card{
+  background:rgba(224,182,79,0.06); border:1px solid var(--border);
+  border-radius:10px; padding:10px 12px; margin-top:10px; font-size:0.82rem;
+}
+.picked-card .name{ font-weight:600; color:var(--gold); margin-bottom:6px; }
+.field-toggle-grid{ display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:8px; }
+.field-toggle{
+  display:flex; align-items:center; justify-content:space-between;
+  background:var(--surface); border:1px solid var(--border); border-radius:8px;
+  padding:6px 9px; font-size:0.76rem;
+}
+.field-toggle .fname{ color:var(--text-dim); }
+.field-toggle .fval{ color:var(--text-faint); font-size:0.68rem; }
+.tg{ display:flex; gap:3px; }
+.tg button{ padding:3px 8px; font-size:0.68rem; border-radius:6px; }
+.tg button.on-good{ background:var(--good); color:#04220f; border-color:transparent; }
+.tg button.on-bad{ background:var(--bad); color:#2a0509; border-color:transparent; }
+
+.guess-item{
+  display:flex; align-items:center; gap:10px; padding:9px 0;
+  border-bottom:1px solid var(--border-soft);
+}
+.guess-item:last-child{border-bottom:none;}
+.guess-item .gname{ flex:1; font-size:0.84rem; }
+.dots{ display:flex; gap:4px; }
+.dot{ width:9px; height:9px; border-radius:50%; }
+.dot.good{ background:var(--good); box-shadow:0 0 6px var(--good);}
+.dot.bad{ background:var(--bad); }
+.rmv{ background:transparent; border:none; color:var(--text-faint); font-size:0.9rem; padding:2px 6px; }
+
+.stat-row{ display:flex; gap:10px; margin-bottom:12px; }
+.stat{
+  flex:1; text-align:center; background:var(--surface); border:1px solid var(--border);
+  border-radius:10px; padding:12px 6px;
+}
+.stat .num{ font-family:'Cinzel'; font-size:1.4rem; color:var(--gold); font-weight:700; }
+.stat .lbl{ font-size:0.68rem; color:var(--text-faint); margin-top:2px; letter-spacing:0.03em; }
+
+.answer-box{
+  background: linear-gradient(135deg, rgba(224,182,79,0.15), rgba(224,182,79,0.04));
+  border:1px solid var(--gold-dim); border-radius:12px; padding:14px; text-align:center;
+}
+.answer-box .label{ font-size:0.72rem; color:var(--gold); letter-spacing:0.08em; margin-bottom:6px; }
+.answer-box .names{ font-size:1.05rem; font-weight:600; }
+
+.suggest-card{
+  background:var(--surface); border:1px solid var(--border); border-radius:10px;
+  padding:10px 12px; margin-bottom:8px;
+}
+.suggest-card .rank{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:18px;height:18px;border-radius:5px; background:rgba(224,182,79,0.15);
+  color:var(--gold); font-size:0.68rem; font-weight:700; margin-right:6px;
+}
+.suggest-card .sname{ font-weight:600; font-size:0.88rem; }
+.suggest-card .smeta{ color:var(--text-faint); font-size:0.72rem; margin-top:4px; }
+.suggest-card .bar-bg{ background:var(--border-soft); border-radius:4px; height:5px; margin-top:6px; overflow:hidden; }
+.suggest-card .bar-fill{ background:linear-gradient(90deg, var(--arcane), var(--gold)); height:100%; }
+
+.cand-search{ margin-bottom:10px; }
+.cand-list{ max-height:260px; overflow-y:auto; border:1px solid var(--border-soft); border-radius:10px; }
+.cand-row{ display:flex; flex-direction:column; gap:2px; padding:7px 10px; font-size:0.78rem; border-bottom:1px solid var(--border-soft); }
+.cand-row:last-child{border-bottom:none;}
+.cand-row .cname{ color:var(--text); font-weight:600; }
+.cand-row .cmeta{ color:var(--text-faint); font-size:0.72rem; }
+.cand-more{ text-align:center; padding:8px; font-size:0.74rem; color:var(--text-faint); }
+
+.hint{ font-size:0.74rem; color:var(--text-faint); line-height:1.5; margin-top:8px; }
+
+.num-input{ max-width:84px; width:84px; text-align:right; }
+
+.advice-box{
+  border-radius:12px; padding:12px 14px; margin-bottom:14px; font-size:0.82rem; line-height:1.55;
+  border:1px solid var(--border-soft);
+}
+.advice-box.lvl-strong{ background:linear-gradient(135deg, rgba(255,109,122,0.18), rgba(255,109,122,0.05)); border-color:var(--bad); }
+.advice-box.lvl-medium{ background:linear-gradient(135deg, rgba(139,107,255,0.18), rgba(139,107,255,0.05)); border-color:var(--arcane); }
+.advice-box.lvl-low{ background:rgba(255,255,255,0.03); border-color:var(--border-soft); color:var(--text-dim); }
+.advice-box.lvl-done{ background:linear-gradient(135deg, rgba(224,182,79,0.15), rgba(224,182,79,0.04)); border-color:var(--gold-dim); }
+.advice-box .tag{ display:block; font-size:0.68rem; letter-spacing:0.06em; font-weight:700; margin-bottom:5px; }
+.advice-box.lvl-strong .tag{ color:var(--bad); }
+.advice-box.lvl-medium .tag{ color:var(--arcane); }
+.advice-box.lvl-low .tag{ color:var(--text-faint); }
+.advice-box.lvl-done .tag{ color:var(--gold); }
+.spinner{ display:inline-block; width:12px;height:12px;border-radius:50%;
+  border:2px solid var(--border); border-top-color:var(--gold); animation:spin 0.7s linear infinite; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+
+footer{ text-align:center; color:var(--text-faint); font-size:0.7rem; margin-top:20px; }
+</style>
+
+<header>
+  <button class="theme-toggle" id="themeToggle" type="button" aria-label="切換亮/暗主題">
+    <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M2 12h2M20 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"></path></svg>
+    <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+  </button>
+  <h1>決鬥解碼盤</h1>
+  <p>遊戲王 Master Duel 猜卡活動 · 候選篩選與最佳猜測建議</p>
+</header>
+
+<div class="disclaimer">本工具為玩家自製的輔助計算小工具，與 Konami / Master Duel 官方無關；卡片資料可能有誤或與遊戲版本不同步，建議結果僅供參考，請仍以遊戲內實際顯示為準。</div>
+
+<div class="panel">
+  <div class="panel-title"><h2><span class="n">R</span>回合進度</h2></div>
+  <div class="row">
+    <label>目前第幾題</label>
+    <div class="btnrow">
+      <button class="ghost" id="roundMinus">−</button>
+      <span class="tabular" style="min-width:56px;text-align:center;font-weight:600;" id="roundLabel">1 / 9</span>
+      <button class="ghost" id="roundPlus">+</button>
+    </div>
+  </div>
+  <div class="btnrow" style="margin-top:10px;">
+    <button class="ghost" id="newRoundBtn">開始新的一回合（清空線索與猜測）</button>
+  </div>
+  <div class="hint">活動截止 10/12 23:59。答對可保留剩餘猜測/提示次數到下一輪，次數請自行依遊戲內顯示管理。</div>
+</div>
+
+<div class="panel">
+  <div class="panel-title"><h2><span class="n">$</span>剩餘次數</h2></div>
+  <div class="row">
+    <label>剩餘猜測次數</label>
+    <input type="number" id="remainingGuessesInput" class="num-input" min="0" placeholder="—">
+  </div>
+  <div class="row">
+    <label>剩餘提示次數</label>
+    <input type="number" id="remainingHintsInput" class="num-input" min="0" placeholder="—">
+  </div>
+
+  <div class="btnrow" style="margin-top:10px;" id="openUseHintArea">
+    <button class="gold" id="openUseHint" style="width:100%;">✦ 使用一次提示</button>
+  </div>
+
+  <div id="useHintForm" hidden style="margin-top:10px;">
+    <div class="row">
+      <label>提示揭露的欄位</label>
+      <select id="hintFieldSelect"></select>
+    </div>
+    <div class="row">
+      <label>對應數值</label>
+      <select id="hintValueSelect"></select>
+    </div>
+    <div class="btnrow" style="margin-top:8px;">
+      <button class="gold" id="confirmHintBtn">確認套用</button>
+      <button class="ghost" id="cancelHintBtn">取消</button>
+    </div>
+  </div>
+  <div class="hint">新增一次猜測紀錄時，剩餘猜測次數會自動 −1；按「使用一次提示」並套用後，剩餘提示次數會自動 −1。這兩個數字只是輔助記錄，不會影響下方候選篩選的邏輯，你可以隨時手動修正。</div>
+</div>
+
+<div class="panel">
+  <div class="panel-title"><h2><span class="n">1</span>已知線索</h2></div>
+  <div id="knownRows"></div>
+  <div class="hint">開局會直接給 1 項資訊；之後每天的提示會隨機補 1 項未知資訊。取得後在這裡設定對應數值即可。</div>
+</div>
+
+<div class="panel">
+  <div class="panel-title"><h2><span class="n">2</span>猜測紀錄</h2></div>
+  <div id="guessList"></div>
+  <div id="guessListEmpty" class="hint">尚未新增任何猜測。</div>
+
+  <div style="margin-top:12px;" id="addGuessArea">
+    <button class="primary" id="openAddGuess" style="width:100%;">＋ 新增一次猜測</button>
+  </div>
+
+  <div id="addGuessForm" hidden style="margin-top:10px;">
+    <div class="search-wrap">
+      <input type="text" id="cardSearch" placeholder="搜尋卡名（輸入中文名關鍵字）..." autocomplete="off">
+      <div class="dropdown" id="searchDropdown" hidden></div>
+    </div>
+    <div id="pickedCardBox"></div>
+    <div class="btnrow" style="margin-top:10px;">
+      <button class="gold" id="confirmGuessBtn" disabled>確認加入猜測結果</button>
+      <button class="ghost" id="cancelGuessBtn">取消</button>
+    </div>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-title"><h2><span class="n">3</span>已知資訊摘要</h2></div>
+  <div class="chips" id="knownChips"></div>
+</div>
+
+<div class="panel">
+  <div class="panel-title"><h2><span class="n">4</span>候選結果</h2></div>
+  <div id="hintAdvice"></div>
+  <div class="stat-row">
+    <div class="stat"><div class="num tabular" id="statCount">-</div><div class="lbl">符合卡片數</div></div>
+    <div class="stat"><div class="num tabular" id="statTuple">-</div><div class="lbl">唯一組合數</div></div>
+  </div>
+
+  <div id="resultBody"></div>
+</div>
+
+<div class="panel">
+  <div class="panel-title"><h2><span class="n">5</span>候選卡清單</h2></div>
+  <input type="text" class="cand-search" id="candSearchBox" placeholder="在候選卡中搜尋名稱...">
+  <div class="cand-list" id="candList"></div>
+</div>
+
+<footer>資料來源：Master Duel 怪獸卡池（共 9060 張），僅本機瀏覽器儲存進度，不會上傳。</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- theme toggle ----------
+  function applyStoredTheme(){
+    try{
+      var t = localStorage.getItem("duel-decoder-theme");
+      if(t === "light" || t === "dark"){
+        document.documentElement.setAttribute("data-theme", t);
+      }
+    }catch(e){}
+  }
+  function currentEffectiveTheme(){
+    var attr = document.documentElement.getAttribute("data-theme");
+    if(attr) return attr;
+    try{
+      if(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) return "dark";
+    }catch(e){}
+    return "light";
+  }
+  function setupThemeToggle(){
+    applyStoredTheme();
+    var btn = document.getElementById("themeToggle");
+    if(!btn) return;
+    btn.addEventListener("click", function(){
+      var next = currentEffectiveTheme() === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", next);
+      try{ localStorage.setItem("duel-decoder-theme", next); }catch(e){}
+    });
+  }
+
+  var FIELDS = ["type","attr","race","lv","atk","def"];
+  var FIELD_NAMES = {type:"類型", attr:"屬性", race:"種族", lv:"星級/階級/連結數", atk:"攻擊力", def:"守備力"};
+
+  // 卡片資料集裡存在、但實測發現尚未實裝在 Master Duel 猜卡活動卡池裡的卡（依使用者回報持續更新）
+  // 遊戲的「類型」猜測只看骨架分類（通常/效果/融合/儀式/同步/超量/連結），
+  // 靈擺(鐘擺)只是附加屬性、不會被單獨視為一種類型；靈擺怪獸一律歸到它本體的類型。
+  // 例如「靈擺/效果」在遊戲裡就是「效果」，「融合/靈擺/效果」就是「融合/效果」。
+  function normalizeGameType(t){
+    return t.replace("靈擺/", "");
+  }
+
+  var state = {
+    round: 1,
+    known: {type:null, attr:null, race:null, lv:null, atk:null, def:null},
+    guesses: [], // {id,name,card:{...}, matches:{type,attr,race,lv,atk,def}}
+    remainingGuesses: null,
+    remainingHints: null
+  };
+
+  var CARDS = [];
+  var byId = {};
+  var uniqueOptions = {}; // field -> sorted array of distinct values
+  var loaded = false;
+
+  function saveState(){
+    try{ localStorage.setItem("duel-decoder-state-v1", JSON.stringify(state)); }catch(e){}
+  }
+  function loadState(){
+    try{
+      var raw = localStorage.getItem("duel-decoder-state-v1");
+      if(raw){
+        var parsed = JSON.parse(raw);
+        if(parsed && typeof parsed === "object"){
+          state.round = parsed.round || 1;
+          state.known = Object.assign({type:null,attr:null,race:null,lv:null,atk:null,def:null}, parsed.known||{});
+          state.guesses = Array.isArray(parsed.guesses) ? parsed.guesses : [];
+          state.remainingGuesses = (typeof parsed.remainingGuesses === "number") ? parsed.remainingGuesses : null;
+          state.remainingHints = (typeof parsed.remainingHints === "number") ? parsed.remainingHints : null;
+        }
+      }
+    }catch(e){}
+  }
+
+  function lvLabel(type){
+    if(type.indexOf("連結") !== -1) return "連結數";
+    if(type.indexOf("超量") !== -1) return "階級";
+    return "星級";
+  }
+
+  function sortLvValues(arr){
+    var attrOrder = function(v){
+      if(v.indexOf("LINK") === 0){ return 1000 + parseInt(v.replace("LINK-",""),10); }
+      var n = parseInt(v,10);
+      return isNaN(n) ? 2000 : n;
+    };
+    return arr.slice().sort(function(a,b){ return attrOrder(a)-attrOrder(b); });
+  }
+  function sortNumericLike(arr){
+    return arr.slice().sort(function(a,b){
+      var na = parseInt(a,10), nb = parseInt(b,10);
+      var aNum = !isNaN(na) && /^\d+$/.test(a);
+      var bNum = !isNaN(nb) && /^\d+$/.test(b);
+      if(aNum && bNum) return na-nb;
+      if(aNum) return -1;
+      if(bNum) return 1;
+      return a.localeCompare(b);
+    });
+  }
+  function sortByFreqDesc(arr, freqMap){
+    return arr.slice().sort(function(a,b){ return (freqMap[b]||0)-(freqMap[a]||0); });
+  }
+
+  function buildOptions(){
+    var sets = {type:{}, attr:{}, race:{}, lv:{}, atk:{}, def:{}};
+    CARDS.forEach(function(c){
+      FIELDS.forEach(function(f){ sets[f][c[f]] = (sets[f][c[f]]||0)+1; });
+    });
+    uniqueOptions.type = sortByFreqDesc(Object.keys(sets.type), sets.type);
+    uniqueOptions.attr = ["光","闇","水","炎","地","風","神"].filter(function(v){return sets.attr[v];});
+    uniqueOptions.race = sortByFreqDesc(Object.keys(sets.race), sets.race);
+    uniqueOptions.lv = sortLvValues(Object.keys(sets.lv));
+    uniqueOptions.atk = sortNumericLike(Object.keys(sets.atk));
+    uniqueOptions.def = sortNumericLike(Object.keys(sets.def));
+  }
+
+  // ---------- rendering: known fields ----------
+  function renderKnownRows(){
+    var wrap = document.getElementById("knownRows");
+    wrap.innerHTML = "";
+    FIELDS.forEach(function(f){
+      var row = document.createElement("div");
+      row.className = "row";
+      var label = document.createElement("label");
+      label.textContent = FIELD_NAMES[f];
+      var sel = document.createElement("select");
+      var optUnknown = document.createElement("option");
+      optUnknown.value = ""; optUnknown.textContent = "未知";
+      sel.appendChild(optUnknown);
+      uniqueOptions[f].forEach(function(v){
+        var o = document.createElement("option");
+        o.value = v;
+        o.textContent = f === "lv" ? v : v;
+        if(state.known[f] === v) o.selected = true;
+        sel.appendChild(o);
+      });
+      if(!state.known[f]) sel.value = "";
+      sel.addEventListener("change", function(){
+        state.known[f] = sel.value || null;
+        saveState();
+        recompute();
+      });
+      row.appendChild(label);
+      row.appendChild(sel);
+      wrap.appendChild(row);
+    });
+  }
+
+  // ---------- resource inputs (remaining guesses / hints) ----------
+  function renderResourceInputs(){
+    var gi = document.getElementById("remainingGuessesInput");
+    var hi = document.getElementById("remainingHintsInput");
+    gi.value = (typeof state.remainingGuesses === "number") ? state.remainingGuesses : "";
+    hi.value = (typeof state.remainingHints === "number") ? state.remainingHints : "";
+  }
+
+  // ---------- use-hint form ----------
+  function renderHintFieldOptions(){
+    var ec = effectiveConstraints();
+    var sel = document.getElementById("hintFieldSelect");
+    sel.innerHTML = "";
+    var unresolved = FIELDS.filter(function(f){ return ec.known[f] === undefined; });
+    if(unresolved.length === 0){
+      var o = document.createElement("option");
+      o.value = ""; o.textContent = "（已無未知欄位）";
+      sel.appendChild(o);
+      document.getElementById("hintValueSelect").innerHTML = "";
+      document.getElementById("confirmHintBtn").disabled = true;
+      return;
+    }
+    document.getElementById("confirmHintBtn").disabled = false;
+    unresolved.forEach(function(f){
+      var o = document.createElement("option");
+      o.value = f; o.textContent = FIELD_NAMES[f];
+      sel.appendChild(o);
+    });
+    renderHintValueOptions(unresolved[0]);
+    sel.onchange = function(){ renderHintValueOptions(sel.value); };
+  }
+  function renderHintValueOptions(field){
+    var sel = document.getElementById("hintValueSelect");
+    sel.innerHTML = "";
+    if(!field || !uniqueOptions[field]) return;
+    uniqueOptions[field].forEach(function(v){
+      var o = document.createElement("option");
+      o.value = v; o.textContent = v;
+      sel.appendChild(o);
+    });
+  }
+
+  // ---------- effective constraints ----------
+  function effectiveConstraints(){
+    var known = {};
+    FIELDS.forEach(function(f){ if(state.known[f]) known[f] = state.known[f]; });
+    var excluded = {type:{}, attr:{}, race:{}, lv:{}, atk:{}, def:{}};
+    state.guesses.forEach(function(g){
+      FIELDS.forEach(function(f){
+        if(g.matches[f] === true){
+          known[f] = g.card[f];
+        } else if(g.matches[f] === false){
+          excluded[f][g.card[f]] = true;
+        }
+      });
+    });
+    return {known:known, excluded:excluded};
+  }
+
+  function computeCandidates(){
+    var ec = effectiveConstraints();
+    return CARDS.filter(function(c){
+      for(var i=0;i<FIELDS.length;i++){
+        var f = FIELDS[i];
+        if(ec.known[f] !== undefined && c[f] !== ec.known[f]) return false;
+        if(ec.excluded[f][c[f]]) return false;
+      }
+      return true;
+    });
+  }
+
+  function tupleKey(c){ return FIELDS.map(function(f){return c[f];}).join("|"); }
+
+  function dedupeByTuple(list){
+    var map = {};
+    list.forEach(function(c){
+      var k = tupleKey(c);
+      if(!map[k]) map[k] = {tuple:FIELDS.reduce(function(o,f){o[f]=c[f];return o;},{}), count:0, sample:c};
+      map[k].count++;
+    });
+    return Object.keys(map).map(function(k){return map[k];});
+  }
+
+  // ---------- known chips summary ----------
+  function renderKnownChips(){
+    var ec = effectiveConstraints();
+    var wrap = document.getElementById("knownChips");
+    wrap.innerHTML = "";
+    var any = false;
+    FIELDS.forEach(function(f){
+      if(ec.known[f] !== undefined){
+        any = true;
+        var chip = document.createElement("span");
+        chip.className = "chip";
+        chip.innerHTML = FIELD_NAMES[f] + " <b>" + ec.known[f] + "</b>";
+        wrap.appendChild(chip);
+      }
+    });
+    if(!any){
+      var chip = document.createElement("span");
+      chip.className = "chip empty";
+      chip.textContent = "尚無已知確定數值";
+      wrap.appendChild(chip);
+    }
+  }
+
+  // ---------- guess list rendering ----------
+  function renderGuessList(){
+    var wrap = document.getElementById("guessList");
+    var empty = document.getElementById("guessListEmpty");
+    wrap.innerHTML = "";
+    if(state.guesses.length === 0){ empty.hidden = false; return; }
+    empty.hidden = true;
+    state.guesses.forEach(function(g, idx){
+      var item = document.createElement("div");
+      item.className = "guess-item";
+      var name = document.createElement("div");
+      name.className = "gname";
+      name.textContent = g.name;
+      var dots = document.createElement("div");
+      dots.className = "dots";
+      FIELDS.forEach(function(f){
+        var d = document.createElement("div");
+        d.className = "dot " + (g.matches[f] ? "good" : "bad");
+        d.title = FIELD_NAMES[f] + (g.matches[f] ? " 對" : " 錯");
+        dots.appendChild(d);
+      });
+      var rm = document.createElement("button");
+      rm.className = "rmv"; rm.textContent = "✕";
+      rm.addEventListener("click", function(){
+        state.guesses.splice(idx,1);
+        saveState(); renderAll();
+      });
+      item.appendChild(name);
+      item.appendChild(dots);
+      item.appendChild(rm);
+      wrap.appendChild(item);
+    });
+  }
+
+  // ---------- add guess form ----------
+  var pendingCard = null;
+  var pendingMatches = {};
+
+  function resetAddGuessForm(){
+    pendingCard = null;
+    pendingMatches = {};
+    document.getElementById("cardSearch").value = "";
+    document.getElementById("pickedCardBox").innerHTML = "";
+    document.getElementById("searchDropdown").hidden = true;
+    document.getElementById("confirmGuessBtn").disabled = true;
+  }
+
+  function renderPickedCard(){
+    var box = document.getElementById("pickedCardBox");
+    if(!pendingCard){ box.innerHTML = ""; return; }
+    var c = pendingCard;
+    var html = '<div class="picked-card"><div class="name">' + c.name + '</div>';
+    html += '<div class="field-toggle-grid">';
+    FIELDS.forEach(function(f){
+      var label = f === "lv" ? lvLabel(c.type) : FIELD_NAMES[f];
+      html += '<div class="field-toggle"><div><div class="fname">'+label+'</div><div class="fval">'+c[f]+'</div></div><div class="tg" data-field="'+f+'">' +
+        '<button type="button" data-val="1" class="'+(pendingMatches[f]===true?"on-good":"")+'">對</button>' +
+        '<button type="button" data-val="0" class="'+(pendingMatches[f]===false?"on-bad":"")+'">錯</button>' +
+        '</div></div>';
+    });
+    html += '</div>';
+    box.innerHTML = html;
+    box.querySelectorAll(".tg").forEach(function(tg){
+      var f = tg.getAttribute("data-field");
+      tg.querySelectorAll("button").forEach(function(btn){
+        btn.addEventListener("click", function(){
+          pendingMatches[f] = btn.getAttribute("data-val") === "1";
+          renderPickedCard();
+          checkConfirmEnabled();
+        });
+      });
+    });
+  }
+
+  function checkConfirmEnabled(){
+    var ok = pendingCard && FIELDS.every(function(f){ return pendingMatches[f] === true || pendingMatches[f] === false; });
+    document.getElementById("confirmGuessBtn").disabled = !ok;
+  }
+
+  function setupSearch(){
+    var input = document.getElementById("cardSearch");
+    var dd = document.getElementById("searchDropdown");
+    input.addEventListener("input", function(){
+      var q = input.value.trim();
+      if(!q){ dd.hidden = true; dd.innerHTML=""; return; }
+      var matches = CARDS.filter(function(c){ return c.name.indexOf(q) !== -1; }).slice(0, 25);
+      dd.innerHTML = "";
+      if(matches.length === 0){
+        var e = document.createElement("div");
+        e.className = "empty"; e.textContent = "查無符合卡名";
+        dd.appendChild(e);
+      } else {
+        matches.forEach(function(c){
+          var row = document.createElement("div");
+          row.textContent = c.name + "（" + c.type + " / " + c.attr + "）";
+          row.addEventListener("click", function(){
+            pendingCard = c;
+            pendingMatches = {};
+            input.value = c.name;
+            dd.hidden = true;
+            renderPickedCard();
+            checkConfirmEnabled();
+          });
+          dd.appendChild(row);
+        });
+      }
+      dd.hidden = false;
+    });
+    document.addEventListener("click", function(e){
+      if(e.target !== input) dd.hidden = true;
+    });
+  }
+
+  // ---------- result / suggestion ----------
+  function computeEntropySuggestions(candidateTuples, allTuples, topN){
+    var totalWeight = candidateTuples.reduce(function(s,t){return s+t.count;},0);
+    if(totalWeight === 0) return [];
+
+    var probePool = allTuples;
+    if(candidateTuples.length > 1200){
+      var candKeys = {};
+      candidateTuples.forEach(function(t){ candKeys[FIELDS.map(function(f){return t.tuple[f];}).join("|")] = true; });
+      var others = allTuples.filter(function(t){ return !candKeys[FIELDS.map(function(f){return t.tuple[f];}).join("|")]; });
+      var shuffled = others.slice();
+      for(var i=shuffled.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var tmp=shuffled[i]; shuffled[i]=shuffled[j]; shuffled[j]=tmp; }
+      probePool = candidateTuples.concat(shuffled.slice(0, Math.max(0, 3000-candidateTuples.length)));
+    }
+
+    var candKeySet = {};
+    candidateTuples.forEach(function(t){ candKeySet[FIELDS.map(function(f){return t.tuple[f];}).join("|")] = true; });
+
+    var results = [];
+    for(var p=0;p<probePool.length;p++){
+      var g = probePool[p].tuple;
+      var gKey = FIELDS.map(function(f){return g[f];}).join("|");
+      var buckets = {};
+      for(var c=0;c<candidateTuples.length;c++){
+        var ct = candidateTuples[c];
+        var pattern = 0;
+        for(var fi=0; fi<FIELDS.length; fi++){
+          if(g[FIELDS[fi]] === ct.tuple[FIELDS[fi]]) pattern |= (1<<fi);
+        }
+        buckets[pattern] = (buckets[pattern]||0) + ct.count;
+      }
+      var entropy = 0, maxW = 0;
+      Object.keys(buckets).forEach(function(k){
+        var w = buckets[k];
+        var pr = w/totalWeight;
+        entropy -= pr*Math.log2(pr);
+        if(w > maxW) maxW = w;
+      });
+      results.push({tuple:g, key:gKey, entropy:entropy, maxW:maxW, isCandidate: !!candKeySet[gKey], sample: probePool[p].sample});
+    }
+    results.sort(function(a,b){
+      if(Math.abs(a.entropy-b.entropy) > 1e-9) return b.entropy - a.entropy;
+      if(a.isCandidate !== b.isCandidate) return a.isCandidate ? -1 : 1;
+      return a.maxW - b.maxW;
+    });
+    return results.slice(0, topN);
+  }
+
+  function filterMetaLine(t){
+    return "類型 " + t.type + "　·　屬性 " + t.attr + "　·　" + lvLabel(t.type) + " " + t.lv +
+      "　·　種族 " + t.race + "　·　攻擊力 " + t.atk + "　·　守備力 " + t.def;
+  }
+
+  function findNamesForTuple(tuple, limit){
+    var key = FIELDS.map(function(f){return tuple[f];}).join("|");
+    var names = [];
+    for(var i=0;i<CARDS.length && names.length<limit;i++){
+      if(tupleKey(CARDS[i]) === key) names.push(CARDS[i].name);
+    }
+    return names;
+  }
+
+  var lastCandidates = [];
+
+  function computeHintAdvice(ec, candidates, tuples){
+    if(tuples.length <= 1){
+      return {level:"done", tag:"已解出", text:"已經鎖定答案組合了，不需要再用提示。"};
+    }
+    var unresolved = FIELDS.filter(function(f){ return ec.known[f] === undefined; });
+    if(unresolved.length === 1){
+      var field = unresolved[0];
+      var valSet = {};
+      candidates.forEach(function(c){ valSet[c[field]] = true; });
+      var m = Object.keys(valSet).length;
+      var saved = ((m-1)/2).toFixed(1);
+      return {
+        level: "strong",
+        tag: "強烈建議：現在用提示",
+        text: "只剩「" + FIELD_NAMES[field] + "」這1項未知，候選中有 " + m + " 種不同數值。這時提示 100% 會揭露這一項，直接鎖定答案；若靠盲猜（沒有高低方向提示），平均要多花約 " + saved + " 次猜測才能試出來。"
+      };
+    }
+    if(tuples.length > 30){
+      return {
+        level: "medium",
+        tag: "適合使用提示",
+        text: "候選組合還有 " + tuples.length + " 組，範圍仍大。如果手上有庫存提示，這是使用的好時機，能有效加速收斂。"
+      };
+    }
+    return {
+      level: "low",
+      tag: "可以先猜，提示留著",
+      text: "候選組合已經縮小到 " + tuples.length + " 組，靠猜測應該就能解決，提示可以留給之後更難的題目。"
+    };
+  }
+
+  function renderHintAdvice(ec, candidates, tuples){
+    var box = document.getElementById("hintAdvice");
+    if(candidates.length === 0){ box.innerHTML = ""; box.className = ""; return; }
+    var adv = computeHintAdvice(ec, candidates, tuples);
+    box.className = "advice-box lvl-" + adv.level;
+    var stock = (typeof state.remainingHints === "number") ? "　（目前庫存提示：" + state.remainingHints + "）" : "";
+    box.innerHTML = '<span class="tag">' + adv.tag + '</span>' + adv.text + stock;
+  }
+
+  function renderResult(){
+    var ec = effectiveConstraints();
+    var candidates = computeCandidates();
+    lastCandidates = candidates;
+    var tuples = dedupeByTuple(candidates);
+
+    document.getElementById("statCount").textContent = candidates.length;
+    document.getElementById("statTuple").textContent = tuples.length;
+
+    renderHintAdvice(ec, candidates, tuples);
+
+    var body = document.getElementById("resultBody");
+    body.innerHTML = "";
+
+    if(candidates.length === 0){
+      body.innerHTML = '<div class="hint" style="color:var(--bad);">目前沒有任何卡片符合所有條件，請檢查已知線索或猜測紀錄是否有輸入錯誤。</div>';
+      return;
+    }
+
+    if(tuples.length === 1){
+      var names = findNamesForTuple(tuples[0].tuple, 8);
+      var box = document.createElement("div");
+      box.className = "answer-box";
+      box.innerHTML = '<div class="label">已鎖定答案組合</div><div class="names">' + names.join("、") + '</div>' +
+        (tuples[0].count>1 ? '<div class="hint">共 '+tuples[0].count+' 張卡符合，任一張皆算對（規則9）。</div>' : '');
+      body.appendChild(box);
+      return;
+    }
+
+    var btn = document.createElement("button");
+    btn.className = "primary";
+    btn.style.width = "100%";
+    btn.textContent = "建議下一猜（計算最佳探測）";
+    var out = document.createElement("div");
+    out.style.marginTop = "10px";
+    body.appendChild(btn);
+    body.appendChild(out);
+
+    btn.addEventListener("click", function(){
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> 計算中...';
+      setTimeout(function(){
+        var allTuples = window.__ALL_TUPLES__;
+        var top = computeEntropySuggestions(tuples, allTuples, 3);
+        out.innerHTML = "";
+        top.forEach(function(r, idx){
+          var names = findNamesForTuple(r.tuple, 3);
+          var expectedRemain = (tuples.reduce(function(s,t){return s+t.count;},0)) / Math.pow(2, r.entropy || 0.0001);
+          var pct = Math.min(100, (r.entropy / Math.log2(64)) * 100);
+          var div = document.createElement("div");
+          div.className = "suggest-card";
+          div.innerHTML = '<span class="rank">'+(idx+1)+'</span><span class="sname">' + names.join(" / ") + '</span>' +
+            '<div class="smeta" style="color:var(--text-dim);">' + filterMetaLine(r.tuple) + '</div>' +
+            '<div class="smeta">預估資訊量 ' + r.entropy.toFixed(2) + ' bits' + (r.isCandidate? '　·　本身也是候選答案':'') + '　·　最壞情況剩 ' + r.maxW + ' 張</div>' +
+            '<div class="bar-bg"><div class="bar-fill" style="width:'+pct.toFixed(0)+'%"></div></div>';
+          out.appendChild(div);
+        });
+        var note = document.createElement("div");
+        note.className = "hint";
+        note.textContent = "「資訊量」代表這一猜平均能排除多少候選；優先選資訊量高、且「最壞情況剩餘數」小的卡。若某筆本身也是候選答案，猜中機率額外加分。卡名下方那行數值可以直接拿去用遊戲內建的篩選功能鎖定卡片（遊戲沒有搜卡名的地方時特別好用）。";
+        out.appendChild(note);
+        btn.textContent = "重新計算建議";
+        btn.disabled = false;
+      }, 30);
+    });
+  }
+
+  function renderCandidateList(filterText){
+    var wrap = document.getElementById("candList");
+    var list = lastCandidates;
+    if(filterText){
+      var q = filterText.trim();
+      list = list.filter(function(c){ return c.name.indexOf(q) !== -1; });
+    }
+    wrap.innerHTML = "";
+    var shown = list.slice(0, 150);
+    shown.forEach(function(c){
+      var row = document.createElement("div");
+      row.className = "cand-row";
+      row.innerHTML = '<span class="cname">'+c.name+'</span><span class="cmeta">'+filterMetaLine(c)+'</span>';
+      wrap.appendChild(row);
+    });
+    if(list.length > shown.length){
+      var more = document.createElement("div");
+      more.className = "cand-more";
+      more.textContent = "還有 " + (list.length - shown.length) + " 張未顯示，請用搜尋縮小範圍";
+      wrap.appendChild(more);
+    }
+    if(list.length === 0){
+      var e = document.createElement("div");
+      e.className = "cand-more"; e.textContent = "無符合卡片";
+      wrap.appendChild(e);
+    }
+  }
+  function lvKeyMeta(c){ return "lv"; }
+
+  function renderRoundLabel(){
+    document.getElementById("roundLabel").textContent = state.round + " / 9";
+  }
+
+  function renderAll(){
+    renderResourceInputs();
+    renderKnownRows();
+    renderKnownChips();
+    renderGuessList();
+    renderResult();
+    renderCandidateList(document.getElementById("candSearchBox").value);
+    renderRoundLabel();
+  }
+
+  function recompute(){
+    renderKnownChips();
+    renderResult();
+    renderCandidateList(document.getElementById("candSearchBox").value);
+  }
+
+  // ---------- events ----------
+  function setupEvents(){
+    document.getElementById("openAddGuess").addEventListener("click", function(){
+      resetAddGuessForm();
+      document.getElementById("addGuessForm").hidden = false;
+      document.getElementById("openAddGuess").hidden = true;
+    });
+    document.getElementById("cancelGuessBtn").addEventListener("click", function(){
+      document.getElementById("addGuessForm").hidden = true;
+      document.getElementById("openAddGuess").hidden = false;
+      resetAddGuessForm();
+    });
+    document.getElementById("confirmGuessBtn").addEventListener("click", function(){
+      if(!pendingCard) return;
+      state.guesses.push({
+        name: pendingCard.name,
+        card: FIELDS.reduce(function(o,f){o[f]=pendingCard[f];return o;}, {}),
+        matches: Object.assign({}, pendingMatches)
+      });
+      if(typeof state.remainingGuesses === "number"){
+        state.remainingGuesses = Math.max(0, state.remainingGuesses - 1);
+      }
+      saveState();
+      document.getElementById("addGuessForm").hidden = true;
+      document.getElementById("openAddGuess").hidden = false;
+      resetAddGuessForm();
+      renderAll();
+    });
+    document.getElementById("remainingGuessesInput").addEventListener("input", function(){
+      var v = this.value === "" ? null : Math.max(0, parseInt(this.value,10)||0);
+      state.remainingGuesses = v;
+      saveState();
+    });
+    document.getElementById("remainingHintsInput").addEventListener("input", function(){
+      var v = this.value === "" ? null : Math.max(0, parseInt(this.value,10)||0);
+      state.remainingHints = v;
+      saveState();
+      renderResult();
+    });
+    document.getElementById("openUseHint").addEventListener("click", function(){
+      renderHintFieldOptions();
+      document.getElementById("useHintForm").hidden = false;
+      document.getElementById("openUseHintArea").hidden = true;
+    });
+    document.getElementById("cancelHintBtn").addEventListener("click", function(){
+      document.getElementById("useHintForm").hidden = true;
+      document.getElementById("openUseHintArea").hidden = false;
+    });
+    document.getElementById("confirmHintBtn").addEventListener("click", function(){
+      var field = document.getElementById("hintFieldSelect").value;
+      var value = document.getElementById("hintValueSelect").value;
+      if(!field || !value) return;
+      state.known[field] = value;
+      if(typeof state.remainingHints === "number"){
+        state.remainingHints = Math.max(0, state.remainingHints - 1);
+      }
+      saveState();
+      document.getElementById("useHintForm").hidden = true;
+      document.getElementById("openUseHintArea").hidden = false;
+      renderAll();
+    });
+    document.getElementById("roundMinus").addEventListener("click", function(){
+      state.round = Math.max(1, state.round-1); saveState(); renderRoundLabel();
+    });
+    document.getElementById("roundPlus").addEventListener("click", function(){
+      state.round = Math.min(9, state.round+1); saveState(); renderRoundLabel();
+    });
+    document.getElementById("newRoundBtn").addEventListener("click", function(){
+      state.round = Math.min(9, state.round+1);
+      state.known = {type:null,attr:null,race:null,lv:null,atk:null,def:null};
+      state.guesses = [];
+      saveState();
+      renderAll();
+    });
+    document.getElementById("candSearchBox").addEventListener("input", function(){
+      renderCandidateList(this.value);
+    });
+    setupSearch();
+  }
+
+  function init(){
+    setupThemeToggle();
+    loadState();
+    fetch("cards.json").then(function(r){ return r.json(); }).then(function(data){
+      data.forEach(function(c){ c.type = normalizeGameType(c.type); });
+      CARDS = data;
+      CARDS.forEach(function(c){ byId[c.id] = c; });
+      buildOptions();
+      window.__ALL_TUPLES__ = dedupeByTuple(CARDS);
+      loaded = true;
+      setupEvents();
+      renderAll();
+    }).catch(function(err){
+      document.getElementById("knownRows").innerHTML = '<div class="hint" style="color:var(--bad);">卡片資料載入失敗，請重新整理頁面。</div>';
+    });
+  }
+
+  init();
+})();
+</script>
