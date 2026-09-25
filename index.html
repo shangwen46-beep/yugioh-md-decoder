@@ -503,12 +503,9 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
   var FIELDS = ["type","attr","race","lv","atk","def"];
   var FIELD_NAMES = {type:"類型", attr:"屬性", race:"種族", lv:"星級/階級/連結數", atk:"攻擊力", def:"守備力"};
 
-  // 卡片資料集裡存在、但實測發現尚未實裝在 Master Duel 猜卡活動卡池裡的卡（依使用者回報持續更新）
-  // 遊戲的「類型」猜測只會落在 7 種骨架分類之一：融合/儀式/同步/超量/連結/效果/通常。
+  // 「類型」欄位（用於跟猜測卡比對 對/錯）只會落在 7 種骨架分類之一：融合/儀式/同步/超量/連結/效果/通常。
   // 一張卡若同時具備特殊召喚類型（融合/儀式/同步/超量/連結）與 效果，遊戲只會顯示特殊召喚類型，
   // 例如「融合/效果」在遊戲裡就是「融合」，不是「效果」；同理「儀式/效果」是「儀式」。
-  // 靈擺(鐘擺)只是附加屬性、不會被單獨視為一種類型也不影響上述判斷，一律直接忽略，
-  // 例如「靈擺/效果」在遊戲裡是「效果」，「融合/靈擺/效果」在遊戲裡是「融合」。
   var TYPE_PRIORITY = ["融合", "儀式", "同步", "超量", "連結"];
   function normalizeGameType(t){
     for(var i=0;i<TYPE_PRIORITY.length;i++){
@@ -518,13 +515,13 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
     return "通常";
   }
 
-  // 個別卡片資料校正：資料庫「種類」欄位標成 靈擺/效果，但實測遊戲內的猜卡活動把它歸類在「通常」
-  // （很可能是本體其實是無效果的靈擺通常怪獸，資料庫標籤有誤），依使用者實測回報持續更新此表。
-  var TYPE_CORRECTIONS = {
-    33656832: "通常", // 曲藝的魔術師
-    45591967: "通常", // 娛樂夥伴 額外射手
-    64450427: "通常"  // 娛樂夥伴 妙想魔女
-  };
+  // 靈擺(鐘擺)怪獸實測「不會被抽成謎底」——這個猜卡活動的答案卡池本身就不包含任何靈擺怪獸
+  // （用非靈擺卡猜中「效果」後，遊戲內建的篩選功能會自動幫你勾上「排除靈擺」，等於直接證實這件事）。
+  // 靈擺卡仍然可以拿來當「猜測」使用（比對時一樣用上面 normalizeGameType 的骨架分類比對），
+  // 只是永遠不會是候選答案，所以候選池要整批排除，而不是把它們的類型折算進某個骨架分類。
+  function isPendulumCard(rawType){
+    return rawType.indexOf("靈擺") !== -1;
+  }
 
   var state = {
     round: 1,
@@ -701,6 +698,7 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
   function computeCandidates(){
     var ec = effectiveConstraints();
     return CARDS.filter(function(c){
+      if(c.isPendulum) return false; // 靈擺怪獸不會是這個活動的謎底，永遠先排除
       for(var i=0;i<FIELDS.length;i++){
         var f = FIELDS[i];
         if(ec.known[f] !== undefined && c[f] !== ec.known[f]) return false;
@@ -1237,7 +1235,7 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
     setupFontControl();
     loadState();
     fetch("cards.json").then(function(r){ return r.json(); }).then(function(data){
-      data.forEach(function(c){ c.type = TYPE_CORRECTIONS[c.id] || normalizeGameType(c.type); });
+      data.forEach(function(c){ c.isPendulum = isPendulumCard(c.type); c.type = normalizeGameType(c.type); });
       CARDS = data;
       CARDS.forEach(function(c){ byId[c.id] = c; });
       buildOptions();
