@@ -21,6 +21,7 @@
   --shadow-inset: rgba(255,255,255,0.7);
   --shadow-outer: rgba(60,50,20,0.12);
   color-scheme: light;
+  font-size: 108%;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
@@ -93,7 +94,7 @@ header h1{
 header p{ color:var(--text-dim); font-size:0.82rem; margin-top:6px; }
 
 .disclaimer{
-  font-size:0.72rem; line-height:1.5; color:var(--text-faint);
+  font-size:0.78rem; line-height:1.5; color:var(--text-faint);
   background:var(--surface2); border:1px solid var(--border-soft); border-radius:10px;
   padding:9px 12px; margin-bottom:16px; text-align:center;
 }
@@ -153,7 +154,7 @@ select:focus{ outline:2px solid var(--arcane); outline-offset:1px; }
 .chip{
   display:inline-flex; align-items:center; gap:5px;
   background:rgba(139,107,255,0.12); border:1px solid rgba(139,107,255,0.35);
-  color:var(--text); border-radius:999px; padding:4px 10px; font-size:0.76rem;
+  color:var(--text); border-radius:999px; padding:4px 10px; font-size:0.82rem;
 }
 .chip b{color:var(--gold); font-weight:600;}
 .chip.empty{ color:var(--text-faint); border-style:dashed; background:transparent; }
@@ -182,32 +183,41 @@ input[type=text], input[type=number]{
 }
 input:focus{ outline:2px solid var(--arcane); outline-offset:1px; }
 
-.search-wrap{ position:relative; }
+.search-row{ display:flex; gap:8px; align-items:stretch; }
+.search-wrap{ position:relative; flex:1; min-width:0; }
+.query-link{
+  flex-shrink:0; display:inline-flex; align-items:center; justify-content:center;
+  padding:0 14px; border-radius:8px; border:1px solid var(--arcane);
+  color:var(--arcane); font-size:0.85rem; font-weight:600; text-decoration:none;
+  white-space:nowrap;
+}
 .dropdown{
   position:absolute; top:calc(100% + 4px); left:0; right:0; z-index:5;
   background:var(--surface2); border:1px solid var(--border); border-radius:10px;
   max-height:220px; overflow-y:auto; box-shadow:0 12px 30px -10px rgba(0,0,0,0.7);
 }
-.dropdown div{ padding:9px 12px; font-size:0.85rem; border-bottom:1px solid var(--border-soft); cursor:pointer; }
+.dropdown div{ padding:9px 12px; font-size:0.9rem; border-bottom:1px solid var(--border-soft); cursor:pointer; }
 .dropdown div:last-child{border-bottom:none;}
 .dropdown div:hover, .dropdown div.hi{ background:rgba(139,107,255,0.15); }
 .dropdown .empty{ color:var(--text-faint); cursor:default; }
 
 .picked-card{
   background:rgba(224,182,79,0.06); border:1px solid var(--border);
-  border-radius:10px; padding:10px 12px; margin-top:10px; font-size:0.82rem;
+  border-radius:10px; padding:10px 12px; margin-top:10px; font-size:0.9rem;
 }
 .picked-card .name{ font-weight:600; color:var(--gold); margin-bottom:6px; }
 .field-toggle-grid{ display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:8px; }
 .field-toggle{
   display:flex; align-items:center; justify-content:space-between;
   background:var(--surface); border:1px solid var(--border); border-radius:8px;
-  padding:6px 9px; font-size:0.76rem;
+  padding:7px 9px; font-size:0.82rem;
 }
+.field-toggle.deduced{ background:var(--surface2); border-style:dashed; }
 .field-toggle .fname{ color:var(--text-dim); }
-.field-toggle .fval{ color:var(--text-faint); font-size:0.68rem; }
+.field-toggle .fval{ color:var(--text-faint); font-size:0.74rem; }
+.field-toggle .deduced-tag{ color:var(--arcane); font-size:0.66rem; font-weight:700; letter-spacing:0.02em; }
 .tg{ display:flex; gap:3px; }
-.tg button{ padding:3px 8px; font-size:0.68rem; border-radius:6px; }
+.tg button{ padding:4px 9px; font-size:0.74rem; border-radius:6px; }
 .tg button.on-good{ background:var(--good); color:#04220f; border-color:transparent; }
 .tg button.on-bad{ background:var(--bad); color:#2a0509; border-color:transparent; }
 
@@ -216,7 +226,7 @@ input:focus{ outline:2px solid var(--arcane); outline-offset:1px; }
   border-bottom:1px solid var(--border-soft);
 }
 .guess-item:last-child{border-bottom:none;}
-.guess-item .gname{ flex:1; font-size:0.84rem; }
+.guess-item .gname{ flex:1; font-size:0.9rem; }
 .dots{ display:flex; gap:4px; }
 .dot{ width:9px; height:9px; border-radius:50%; }
 .dot.good{ background:var(--good); box-shadow:0 0 6px var(--good);}
@@ -235,7 +245,7 @@ input:focus{ outline:2px solid var(--arcane); outline-offset:1px; }
   background: linear-gradient(135deg, rgba(224,182,79,0.15), rgba(224,182,79,0.04));
   border:1px solid var(--gold-dim); border-radius:12px; padding:14px; text-align:center;
 }
-.answer-box .label{ font-size:0.72rem; color:var(--gold); letter-spacing:0.08em; margin-bottom:6px; }
+.answer-box .label{ font-size:0.78rem; color:var(--gold); letter-spacing:0.08em; margin-bottom:6px; }
 .answer-box .names{ font-size:1.05rem; font-weight:600; }
 
 .suggest-card{
@@ -248,7 +258,7 @@ input:focus{ outline:2px solid var(--arcane); outline-offset:1px; }
   color:var(--gold); font-size:0.68rem; font-weight:700; margin-right:6px;
 }
 .suggest-card .sname{ font-weight:600; font-size:0.88rem; }
-.suggest-card .smeta{ color:var(--text-faint); font-size:0.72rem; margin-top:4px; }
+.suggest-card .smeta{ color:var(--text-faint); font-size:0.78rem; margin-top:4px; }
 .suggest-card .bar-bg{ background:var(--border-soft); border-radius:4px; height:5px; margin-top:6px; overflow:hidden; }
 .suggest-card .bar-fill{ background:linear-gradient(90deg, var(--arcane), var(--gold)); height:100%; }
 
@@ -257,10 +267,10 @@ input:focus{ outline:2px solid var(--arcane); outline-offset:1px; }
 .cand-row{ display:flex; flex-direction:column; gap:2px; padding:7px 10px; font-size:0.78rem; border-bottom:1px solid var(--border-soft); }
 .cand-row:last-child{border-bottom:none;}
 .cand-row .cname{ color:var(--text); font-weight:600; }
-.cand-row .cmeta{ color:var(--text-faint); font-size:0.72rem; }
-.cand-more{ text-align:center; padding:8px; font-size:0.74rem; color:var(--text-faint); }
+.cand-row .cmeta{ color:var(--text-faint); font-size:0.78rem; }
+.cand-more{ text-align:center; padding:8px; font-size:0.8rem; color:var(--text-faint); }
 
-.hint{ font-size:0.74rem; color:var(--text-faint); line-height:1.5; margin-top:8px; }
+.hint{ font-size:0.8rem; color:var(--text-faint); line-height:1.5; margin-top:8px; }
 
 .num-input{ max-width:84px; width:84px; text-align:right; }
 
@@ -281,7 +291,7 @@ input:focus{ outline:2px solid var(--arcane); outline-offset:1px; }
   border:2px solid var(--border); border-top-color:var(--gold); animation:spin 0.7s linear infinite; }
 @keyframes spin{ to{ transform:rotate(360deg); } }
 
-footer{ text-align:center; color:var(--text-faint); font-size:0.7rem; margin-top:20px; }
+footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-top:20px; }
 </style>
 
 <header>
@@ -359,10 +369,14 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.7rem; margin-top
   </div>
 
   <div id="addGuessForm" hidden style="margin-top:10px;">
-    <div class="search-wrap">
-      <input type="text" id="cardSearch" placeholder="搜尋卡名（輸入中文名關鍵字）..." autocomplete="off">
-      <div class="dropdown" id="searchDropdown" hidden></div>
+    <div class="search-row">
+      <div class="search-wrap">
+        <input type="text" id="cardSearch" placeholder="搜尋卡名（輸入中文名關鍵字）..." autocomplete="off">
+        <div class="dropdown" id="searchDropdown" hidden></div>
+      </div>
+      <a class="query-link" href="https://salix5.github.io/query/" target="_blank" rel="noopener">查牌網 ↗</a>
     </div>
+    <div class="hint" style="margin-top:6px;">遊戲內卡名常跟資料庫翻譯不同、又不能複製，可以開查牌網用圖片/其他條件找到正確卡名。</div>
     <div id="pickedCardBox"></div>
     <div class="btnrow" style="margin-top:10px;">
       <button class="gold" id="confirmGuessBtn" disabled>確認加入猜測結果</button>
@@ -687,10 +701,42 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.7rem; margin-top
   // ---------- add guess form ----------
   var pendingCard = null;
   var pendingMatches = {};
+  var pendingDeduced = {};
+
+  // 依目前已知線索(含已猜過卡的排除值)，能不能不用問遊戲就先推算出這張卡在某欄位一定對/一定錯
+  function autoDeduceMatches(card){
+    var ec = effectiveConstraints();
+    var result = {};
+    FIELDS.forEach(function(f){
+      if(ec.known[f] !== undefined){
+        result[f] = (card[f] === ec.known[f]);
+      } else if(ec.excluded[f] && ec.excluded[f][card[f]]){
+        result[f] = false;
+      }
+    });
+    return result;
+  }
+
+  function openAddGuessForm(){
+    document.getElementById("addGuessForm").hidden = false;
+    document.getElementById("openAddGuess").hidden = true;
+  }
+
+  function selectCardForGuess(card){
+    pendingCard = card;
+    pendingDeduced = autoDeduceMatches(card);
+    pendingMatches = {};
+    FIELDS.forEach(function(f){ if(pendingDeduced[f] !== undefined) pendingMatches[f] = pendingDeduced[f]; });
+    document.getElementById("cardSearch").value = card.name;
+    document.getElementById("searchDropdown").hidden = true;
+    renderPickedCard();
+    checkConfirmEnabled();
+  }
 
   function resetAddGuessForm(){
     pendingCard = null;
     pendingMatches = {};
+    pendingDeduced = {};
     document.getElementById("cardSearch").value = "";
     document.getElementById("pickedCardBox").innerHTML = "";
     document.getElementById("searchDropdown").hidden = true;
@@ -701,11 +747,16 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.7rem; margin-top
     var box = document.getElementById("pickedCardBox");
     if(!pendingCard){ box.innerHTML = ""; return; }
     var c = pendingCard;
+    var deducedCount = FIELDS.filter(function(f){ return pendingDeduced[f] !== undefined; }).length;
     var html = '<div class="picked-card"><div class="name">' + c.name + '</div>';
+    if(deducedCount > 0){
+      html += '<div class="hint" style="margin-top:0;margin-bottom:8px;">已自動依已知線索判斷 '+deducedCount+' 項（標示「推算」），其餘 '+(6-deducedCount)+' 項請照遊戲實際顯示點選對/錯。</div>';
+    }
     html += '<div class="field-toggle-grid">';
     FIELDS.forEach(function(f){
       var label = f === "lv" ? lvLabel(c.type) : FIELD_NAMES[f];
-      html += '<div class="field-toggle"><div><div class="fname">'+label+'</div><div class="fval">'+c[f]+'</div></div><div class="tg" data-field="'+f+'">' +
+      var isDeduced = pendingDeduced[f] !== undefined;
+      html += '<div class="field-toggle'+(isDeduced?' deduced':'')+'"><div><div class="fname">'+label+(isDeduced?' <span class="deduced-tag">推算</span>':'')+'</div><div class="fval">'+c[f]+'</div></div><div class="tg" data-field="'+f+'">' +
         '<button type="button" data-val="1" class="'+(pendingMatches[f]===true?"on-good":"")+'">對</button>' +
         '<button type="button" data-val="0" class="'+(pendingMatches[f]===false?"on-bad":"")+'">錯</button>' +
         '</div></div>';
@@ -746,12 +797,7 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.7rem; margin-top
           var row = document.createElement("div");
           row.textContent = c.name + "（" + c.type + " / " + c.attr + "）";
           row.addEventListener("click", function(){
-            pendingCard = c;
-            pendingMatches = {};
-            input.value = c.name;
-            dd.hidden = true;
-            renderPickedCard();
-            checkConfirmEnabled();
+            selectCardForGuess(c);
           });
           dd.appendChild(row);
         });
@@ -912,6 +958,11 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.7rem; margin-top
         var allTuples = window.__ALL_TUPLES__;
         var top = computeEntropySuggestions(tuples, allTuples, 3);
         out.innerHTML = "";
+        var warn = document.createElement("div");
+        warn.className = "hint";
+        warn.style.color = "var(--bad)";
+        warn.innerHTML = "⚠ 建議卡是為了「最大化排除候選」挑的，<b>不代表它一定符合你已知的線索</b>（例如已知攻擊力2800，建議卡可能是2400）。點下方「用這張猜」會自動幫你把跟已知線索矛盾/相符的欄位先判斷好，你只要照遊戲實際顯示，把剩下沒被自動判斷的欄位補上對/錯就好。";
+        out.appendChild(warn);
         top.forEach(function(r, idx){
           var names = findNamesForTuple(r.tuple, 3);
           var expectedRemain = (tuples.reduce(function(s,t){return s+t.count;},0)) / Math.pow(2, r.entropy || 0.0001);
@@ -922,6 +973,18 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.7rem; margin-top
             '<div class="smeta" style="color:var(--text-dim);">' + filterMetaLine(r.tuple) + '</div>' +
             '<div class="smeta">預估資訊量 ' + r.entropy.toFixed(2) + ' bits' + (r.isCandidate? '　·　本身也是候選答案':'') + '　·　最壞情況剩 ' + r.maxW + ' 張</div>' +
             '<div class="bar-bg"><div class="bar-fill" style="width:'+pct.toFixed(0)+'%"></div></div>';
+          var pickBtn = document.createElement("button");
+          pickBtn.type = "button";
+          pickBtn.className = "gold";
+          pickBtn.style.width = "100%";
+          pickBtn.style.marginTop = "10px";
+          pickBtn.textContent = "用這張猜 →";
+          pickBtn.addEventListener("click", function(){
+            openAddGuessForm();
+            selectCardForGuess(r.sample);
+            document.getElementById("addGuessForm").scrollIntoView({behavior:"smooth", block:"center"});
+          });
+          div.appendChild(pickBtn);
           out.appendChild(div);
         });
         var note = document.createElement("div");
@@ -987,8 +1050,7 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.7rem; margin-top
   function setupEvents(){
     document.getElementById("openAddGuess").addEventListener("click", function(){
       resetAddGuessForm();
-      document.getElementById("addGuessForm").hidden = false;
-      document.getElementById("openAddGuess").hidden = true;
+      openAddGuessForm();
     });
     document.getElementById("cancelGuessBtn").addEventListener("click", function(){
       document.getElementById("addGuessForm").hidden = true;
