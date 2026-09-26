@@ -562,7 +562,7 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
 
   // 每次發布時手動更新這個時間戳（台灣時間），問題回饋會自動帶上這個版本，
   // 方便回報時判斷對方是不是還沒更新到已修好的版本。
-  var TOOL_VERSION = "2026-09-27 04:07";
+  var TOOL_VERSION = "2026-09-27 05:20";
 
   var CARDS = [];
   var byId = {};
@@ -596,8 +596,8 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
   }
 
   function sortLvValues(arr){
+    // 連結數已在載入時去除 "LINK-" 前綴，統一用純數字排序即可。
     var attrOrder = function(v){
-      if(v.indexOf("LINK") === 0){ return 1000 + parseInt(v.replace("LINK-",""),10); }
       var n = parseInt(v,10);
       return isNaN(n) ? 2000 : n;
     };
@@ -1352,7 +1352,16 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
     var vt = document.getElementById("versionTag");
     if(vt) vt.textContent = "・版本 " + TOOL_VERSION;
     fetch("cards.json").then(function(r){ return r.json(); }).then(function(data){
-      data.forEach(function(c){ c.isPendulum = isPendulumCard(c.type); c.type = normalizeGameType(c.type); });
+      data.forEach(function(c){
+        c.isPendulum = isPendulumCard(c.type);
+        c.type = normalizeGameType(c.type);
+        // 連結怪獸的「連結數」在資料裡是 "LINK-4" 這種字串，但遊戲的猜測比對
+        // 把星級/階級/連結數視為同一個數值欄位（Lv4=階級4=連結4視為相同的「4」），
+        // 所以這裡把前綴去掉，讓後續已知/排除比對用純數字字串來比較。
+        if(typeof c.lv === "string" && c.lv.indexOf("LINK-") === 0){
+          c.lv = c.lv.slice(5);
+        }
+      });
       CARDS = data;
       CARDS.forEach(function(c){ byId[c.id] = c; });
       buildOptions();
