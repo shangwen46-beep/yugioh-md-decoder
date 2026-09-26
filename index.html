@@ -562,7 +562,7 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
 
   // 每次發布時手動更新這個時間戳（台灣時間），問題回饋會自動帶上這個版本，
   // 方便回報時判斷對方是不是還沒更新到已修好的版本。
-  var TOOL_VERSION = "2026-09-27 03:36";
+  var TOOL_VERSION = "2026-09-27 04:03";
 
   var CARDS = [];
   var byId = {};
@@ -729,10 +729,17 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
     return {known:known, excluded:excluded};
   }
 
+  // 資料庫裡存在、但實測發現不在這個猜卡活動答案池裡的卡（例如版權/授權限制的特別聯名合作卡），
+  // 依使用者實測回報持續更新。這些卡仍然可以拿來當「猜測」使用，只是永遠不會是候選答案。
+  var EXCLUDED_ANSWER_IDS = {
+    49858495: true // 實況野球女郎三姊妹（特別聯名合作卡）
+  };
+
   function computeCandidates(){
     var ec = effectiveConstraints();
     return CARDS.filter(function(c){
       if(state.excludePendulum && c.isPendulum) return false; // 使用者手動勾選「排除靈擺」時才排除
+      if(EXCLUDED_ANSWER_IDS[c.id]) return false;
       for(var i=0;i<FIELDS.length;i++){
         var f = FIELDS[i];
         if(ec.known[f] !== undefined && c[f] !== ec.known[f]) return false;
