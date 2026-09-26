@@ -353,7 +353,7 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
   <p>遊戲王 Master Duel 猜卡活動 · 候選篩選與最佳猜測建議</p>
 </header>
 
-<div class="disclaimer">本工具為玩家自製的輔助計算小工具，與 Konami / Master Duel 官方無關；卡片資料可能有誤或與遊戲版本不同步，建議結果僅供參考，請仍以遊戲內實際顯示為準。</div>
+<div class="disclaimer">本工具為玩家自製的輔助計算小工具，與 Konami / Master Duel 官方無關；卡片資料可能有誤或與遊戲版本不同步，建議結果僅供參考，請仍以遊戲內實際顯示為準。另外發現MD會排除特別聯名合作卡（例如「實況野球女郎三姊妹」），如果候選數對不上、發現是類似的聯名卡，歡迎用下方「問題回饋」告訴我；1張卡以內的落差也可以不用理它，不影響判斷。</div>
 
 <div class="panel">
   <div class="panel-title"><h2><span class="n">R</span>回合進度</h2></div>
@@ -445,7 +445,7 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
   <div id="hintAdvice"></div>
   <label class="pendulum-toggle" for="excludePendulumChk">
     <input type="checkbox" id="excludePendulumChk">
-    <span>排除項目-靈擺（符合卡片數與遊戲中不同時，請檢查遊戲中篩選功能是否自動勾選了排除靈擺怪獸——這其實是遊戲Bug，不是穩定規則。如果你在遊戲裡看到它被自動勾起，代表這題答案確定不是靈擺卡，這裡也勾起來同步排除）</span>
+    <span>排除項目-鐘擺（符合卡片數與遊戲中不同時，請檢查遊戲中篩選功能是否自動勾選了排除鐘擺怪獸——這其實是遊戲Bug，不是穩定規則。如果你在遊戲裡看到它被自動勾起，代表這題答案確定不是鐘擺卡，這裡也勾起來同步排除）</span>
   </label>
   <div class="stat-row">
     <div class="stat"><div class="num tabular" id="statCount">-</div><div class="lbl">符合卡片數</div></div>
@@ -562,7 +562,7 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
 
   // 每次發布時手動更新這個時間戳（台灣時間），問題回饋會自動帶上這個版本，
   // 方便回報時判斷對方是不是還沒更新到已修好的版本。
-  var TOOL_VERSION = "2026-09-27 04:03";
+  var TOOL_VERSION = "2026-09-27 04:07";
 
   var CARDS = [];
   var byId = {};
