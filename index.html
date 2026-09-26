@@ -289,6 +289,14 @@ textarea:focus{ outline:2px solid var(--arcane); outline-offset:1px; }
 
 .hint{ font-size:0.8rem; color:var(--text-faint); line-height:1.5; margin-top:8px; }
 
+.pendulum-toggle{
+  display:flex; gap:10px; align-items:flex-start; cursor:pointer; margin-bottom:12px;
+  padding:10px 12px; border-radius:10px; border:1.5px dashed var(--border);
+  font-size:0.78rem; color:var(--text-dim); line-height:1.5;
+}
+.pendulum-toggle input{ margin-top:3px; width:16px; height:16px; flex-shrink:0; accent-color:var(--arcane); cursor:pointer; }
+.pendulum-toggle:has(input:checked){ border-style:solid; border-color:var(--arcane); color:var(--text); }
+
 .num-input{ max-width:84px; width:84px; text-align:right; }
 
 .advice-box{
@@ -434,6 +442,10 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
 
 <div class="panel">
   <div class="panel-title"><h2><span class="n">4</span>候選結果</h2></div>
+  <label class="pendulum-toggle" for="excludePendulumChk">
+    <input type="checkbox" id="excludePendulumChk">
+    <span>排除靈擺怪獸（MD遊戲的篩選功能有時會在確定某項資訊後自動幫你勾選「排除靈擺」——這其實是遊戲利用答案資訊出現的Bug，不是穩定規則。如果你在遊戲裡看到它被自動勾起，代表這題答案確定不是靈擺卡，這裡也勾起來同步排除；平常不要自己猜著勾，靈擺卡本來就可能是答案。）</span>
+  </label>
   <div id="hintAdvice"></div>
   <div class="stat-row">
     <div class="stat"><div class="num tabular" id="statCount">-</div><div class="lbl">符合卡片數</div></div>
@@ -530,10 +542,11 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
     return "通常";
   }
 
-  // 靈擺(鐘擺)怪獸實測「不會被抽成謎底」——這個猜卡活動的答案卡池本身就不包含任何靈擺怪獸
-  // （用非靈擺卡猜中「效果」後，遊戲內建的篩選功能會自動幫你勾上「排除靈擺」，等於直接證實這件事）。
-  // 靈擺卡仍然可以拿來當「猜測」使用（比對時一樣用上面 normalizeGameType 的骨架分類比對），
-  // 只是永遠不會是候選答案，所以候選池要整批排除，而不是把它們的類型折算進某個骨架分類。
+  // 靈擺(鐘擺)怪獸「不一定」不能是謎底——實測發現只知道屬性等單一資訊時，靈擺卡仍然是有效候選。
+  // 但曾經觀察到：一旦某個猜測讓「類型」被唯一鎖定成某個骨架分類（例如靠一張非靈擺卡猜中「效果」），
+  // 遊戲內建的篩選功能就會自動幫你勾上「排除靈擺」。目前判斷這比較像是遊戲篩選器本身利用了答案資訊
+  // 才能推得出來的行為（也就是說它其實已經偷看答案），不是穩定、可從已知資訊反推的規則，所以不自動套用，
+  // 改成使用者自己在④候選結果面板手動勾選「排除靈擺」，什麼時候勾全憑玩家在遊戲裡實際看到的狀況。
   function isPendulumCard(rawType){
     return rawType.indexOf("靈擺") !== -1;
   }
@@ -543,12 +556,13 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
     known: {type:null, attr:null, race:null, lv:null, atk:null, def:null},
     guesses: [], // {id,name,card:{...}, matches:{type,attr,race,lv,atk,def}}
     remainingGuesses: null,
-    remainingHints: null
+    remainingHints: null,
+    excludePendulum: false
   };
 
   // 每次發布時手動更新這個時間戳（台灣時間），問題回饋會自動帶上這個版本，
   // 方便回報時判斷對方是不是還沒更新到已修好的版本。
-  var TOOL_VERSION = "2026-09-26 10:33";
+  var TOOL_VERSION = "2026-09-27 03:23";
 
   var CARDS = [];
   var byId = {};
@@ -569,6 +583,7 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
           state.guesses = Array.isArray(parsed.guesses) ? parsed.guesses : [];
           state.remainingGuesses = (typeof parsed.remainingGuesses === "number") ? parsed.remainingGuesses : null;
           state.remainingHints = (typeof parsed.remainingHints === "number") ? parsed.remainingHints : null;
+          state.excludePendulum = !!parsed.excludePendulum;
         }
       }
     }catch(e){}
@@ -717,7 +732,7 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
   function computeCandidates(){
     var ec = effectiveConstraints();
     return CARDS.filter(function(c){
-      if(c.isPendulum) return false; // 靈擺怪獸不會是這個活動的謎底，永遠先排除
+      if(state.excludePendulum && c.isPendulum) return false; // 使用者手動勾選「排除靈擺」時才排除
       for(var i=0;i<FIELDS.length;i++){
         var f = FIELDS[i];
         if(ec.known[f] !== undefined && c[f] !== ec.known[f]) return false;
@@ -1173,6 +1188,8 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
     renderResult();
     renderCandidateList(document.getElementById("candSearchBox").value);
     renderRoundLabel();
+    var pendChk = document.getElementById("excludePendulumChk");
+    if(pendChk) pendChk.checked = !!state.excludePendulum;
   }
 
   function recompute(){
@@ -1259,6 +1276,11 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
       renderCandidateList(this.value);
     });
     document.getElementById("sendFeedbackBtn").addEventListener("click", sendFeedback);
+    document.getElementById("excludePendulumChk").addEventListener("change", function(){
+      state.excludePendulum = this.checked;
+      saveState();
+      recompute();
+    });
     setupSearch();
   }
 
@@ -1272,6 +1294,7 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
     var ec = effectiveConstraints();
     var lines = [];
     lines.push("工具版本：" + TOOL_VERSION);
+    lines.push("已手動排除靈擺：" + (state.excludePendulum ? "是" : "否"));
     lines.push("回合：第 " + state.round + " 題");
     var knownParts = FIELDS.map(function(f){
       return ec.known[f] !== undefined ? (FIELD_NAMES[f] + "=" + ec.known[f]) : null;
