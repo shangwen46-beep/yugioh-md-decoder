@@ -562,7 +562,7 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
 
   // 每次發布時手動更新這個時間戳（台灣時間），問題回饋會自動帶上這個版本，
   // 方便回報時判斷對方是不是還沒更新到已修好的版本。
-  var TOOL_VERSION = "2026-09-27 05:20";
+  var TOOL_VERSION = "2026-09-27 06:10";
 
   var CARDS = [];
   var byId = {};
@@ -870,7 +870,7 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
     var deducedCount = FIELDS.filter(function(f){ return pendingDeduced[f] !== undefined; }).length;
     var html = '<div class="picked-card"><div class="name">' + c.name + '</div>';
     if(deducedCount > 0){
-      html += '<div class="hint" style="margin-top:0;margin-bottom:8px;">已自動依已知線索判斷 '+deducedCount+' 項（標示「推算」），其餘 '+(6-deducedCount)+' 項請照遊戲實際顯示點選對/錯。</div>';
+      html += '<div class="hint" style="margin-top:0;margin-bottom:8px;">已自動依已知線索判斷 '+deducedCount+' 項（標示「推算」），其餘 '+(6-deducedCount)+' 項可對照遊戲內「紀錄」點選對/錯。</div>';
     }
     html += '<div class="field-toggle-grid">';
     FIELDS.forEach(function(f){
