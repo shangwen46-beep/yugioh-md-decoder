@@ -548,7 +548,7 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
 
   // 每次發布時手動更新這個時間戳（台灣時間），問題回饋會自動帶上這個版本，
   // 方便回報時判斷對方是不是還沒更新到已修好的版本。
-  var TOOL_VERSION = "2026-09-26 10:31";
+  var TOOL_VERSION = "2026-09-26 10:33";
 
   var CARDS = [];
   var byId = {};
@@ -1195,6 +1195,7 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
     document.getElementById("confirmGuessBtn").addEventListener("click", function(){
       if(!pendingCard) return;
       state.guesses.push({
+        id: pendingCard.id,
         name: pendingCard.name,
         card: FIELDS.reduce(function(o,f){o[f]=pendingCard[f];return o;}, {}),
         matches: Object.assign({}, pendingMatches)
@@ -1283,7 +1284,8 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
           var m = g.matches[f];
           return FIELD_NAMES[f] + (m === true ? "✓" : (m === false ? "✗" : "?"));
         }).join(" ");
-        lines.push("  " + (idx+1) + ". " + g.name + "｜" + fb);
+        var idPart = g.id ? ("#" + g.id + " ") : "";
+        lines.push("  " + (idx+1) + ". " + idPart + g.name + "｜" + fb);
       });
     } else {
       lines.push("猜測紀錄：（無）");
