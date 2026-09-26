@@ -193,6 +193,13 @@ input[type=text], input[type=number]{
 }
 input:focus{ outline:2px solid var(--arcane); outline-offset:1px; }
 
+textarea{
+  background:var(--surface); color:var(--text); border:1px solid var(--border);
+  border-radius:8px; padding:9px 11px; font-size:0.88rem; font-family:inherit; width:100%;
+  resize:vertical; min-height:90px;
+}
+textarea:focus{ outline:2px solid var(--arcane); outline-offset:1px; }
+
 .search-row{ display:flex; gap:8px; align-items:stretch; }
 .search-wrap{ position:relative; flex:1; min-width:0; }
 .query-link{
@@ -440,6 +447,14 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
   <div class="panel-title"><h2><span class="n">5</span>候選卡清單</h2></div>
   <input type="text" class="cand-search" id="candSearchBox" placeholder="在候選卡中搜尋名稱...">
   <div class="cand-list" id="candList"></div>
+</div>
+
+<div class="panel">
+  <div class="panel-title"><h2><span class="n">✎</span>問題回饋</h2></div>
+  <div class="hint" style="margin-bottom:8px;">遇到卡池資料錯誤、算出來的數字不對，或任何操作上的問題，都可以在這裡描述一下。送出時會自動一起附上目前的已知線索、猜測紀錄、候選數等工具狀態，方便我對照重現問題——不會附上任何個人資訊。按下送出後會開一個新分頁到 Google 表單，你只要按「提交」就完成了，不需要登入或註冊。</div>
+  <textarea id="feedbackText" placeholder="描述你遇到的問題，例如：候選卡數跟遊戲內顯示的不一樣、某張卡的資料好像有誤……"></textarea>
+  <button class="primary" id="sendFeedbackBtn" style="width:100%; margin-top:10px;">送出問題回饋 ↗</button>
+  <div class="hint" id="feedbackMsg" style="margin-top:8px;"></div>
 </div>
 
 <footer>資料來源：Master Duel 怪獸卡池（共 9060 張），僅本機瀏覽器儲存進度，不會上傳。</footer>
@@ -1238,7 +1253,59 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
     document.getElementById("candSearchBox").addEventListener("input", function(){
       renderCandidateList(this.value);
     });
+    document.getElementById("sendFeedbackBtn").addEventListener("click", sendFeedback);
     setupSearch();
+  }
+
+  // 問題回饋：只帶「工具狀態」（已知線索/猜測紀錄/候選數等），不含任何個資，
+  // 組成純文字後塞進 Google 表單的「預先填寫連結」，開新分頁讓使用者自己按送出。
+  var FEEDBACK_FORM_BASE = "https://docs.google.com/forms/d/e/1FAIpQLSdtjrgb7oDmdQ58z7NQoCeMW-gzBEMemG1jYdB11-p6iTzWwA/viewform";
+  var FEEDBACK_ENTRY_DESC = "entry.1899388008";
+  var FEEDBACK_ENTRY_STATE = "entry.1624951211";
+
+  function buildToolStateSummary(){
+    var ec = effectiveConstraints();
+    var lines = [];
+    lines.push("回合：第 " + state.round + " 題");
+    var knownParts = FIELDS.map(function(f){
+      return ec.known[f] !== undefined ? (FIELD_NAMES[f] + "=" + ec.known[f]) : null;
+    }).filter(Boolean);
+    lines.push("已知線索：" + (knownParts.length ? knownParts.join("、") : "（無）"));
+    if(state.guesses.length){
+      lines.push("猜測紀錄（" + state.guesses.length + " 次）：");
+      state.guesses.forEach(function(g, idx){
+        var fb = FIELDS.map(function(f){
+          var m = g.matches[f];
+          return FIELD_NAMES[f] + (m === true ? "✓" : (m === false ? "✗" : "?"));
+        }).join(" ");
+        lines.push("  " + (idx+1) + ". " + g.name + "｜" + fb);
+      });
+    } else {
+      lines.push("猜測紀錄：（無）");
+    }
+    var candidates = computeCandidates();
+    var tuples = dedupeByTuple(candidates);
+    lines.push("符合卡片數：" + candidates.length + "，唯一組合數：" + tuples.length);
+    if(typeof state.remainingGuesses === "number") lines.push("剩餘猜測次數：" + state.remainingGuesses);
+    if(typeof state.remainingHints === "number") lines.push("剩餘提示次數：" + state.remainingHints);
+    return lines.join("\n");
+  }
+
+  function sendFeedback(){
+    var msg = document.getElementById("feedbackMsg");
+    var text = document.getElementById("feedbackText").value.trim();
+    if(!text){
+      msg.style.color = "var(--bad)";
+      msg.textContent = "請先描述一下遇到的問題，再送出。";
+      return;
+    }
+    var stateSummary = buildToolStateSummary();
+    var url = FEEDBACK_FORM_BASE + "?usp=pp_url" +
+      "&" + FEEDBACK_ENTRY_DESC + "=" + encodeURIComponent(text) +
+      "&" + FEEDBACK_ENTRY_STATE + "=" + encodeURIComponent(stateSummary);
+    window.open(url, "_blank", "noopener");
+    msg.style.color = "var(--good)";
+    msg.textContent = "已經幫你把描述跟目前的工具狀態填好，開新分頁後按 Google 表單的「提交」就完成了。";
   }
 
   function init(){
