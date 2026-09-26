@@ -445,7 +445,7 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
   <div id="hintAdvice"></div>
   <label class="pendulum-toggle" for="excludePendulumChk">
     <input type="checkbox" id="excludePendulumChk">
-    <span>符合卡片數與遊戲中不同時，請檢查遊戲中篩選功能是否自動勾選了排除靈擺怪獸（MD遊戲的篩選功能有時會在確定某項資訊後自動幫你勾選「排除項目-靈擺」——這其實是Bug，不是穩定規則。如果你在遊戲裡看到它被自動勾起，代表這題答案確定不是靈擺卡，這裡也勾起來同步排除）</span>
+    <span>排除項目-靈擺（符合卡片數與遊戲中不同時，請檢查遊戲中篩選功能是否自動勾選了排除靈擺怪獸——這其實是遊戲Bug，不是穩定規則。如果你在遊戲裡看到它被自動勾起，代表這題答案確定不是靈擺卡，這裡也勾起來同步排除）</span>
   </label>
   <div class="stat-row">
     <div class="stat"><div class="num tabular" id="statCount">-</div><div class="lbl">符合卡片數</div></div>
@@ -562,7 +562,7 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
 
   // 每次發布時手動更新這個時間戳（台灣時間），問題回饋會自動帶上這個版本，
   // 方便回報時判斷對方是不是還沒更新到已修好的版本。
-  var TOOL_VERSION = "2026-09-27 03:28";
+  var TOOL_VERSION = "2026-09-27 03:36";
 
   var CARDS = [];
   var byId = {};
