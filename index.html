@@ -457,7 +457,7 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
   <div class="hint" id="feedbackMsg" style="margin-top:8px;"></div>
 </div>
 
-<footer>資料來源：Master Duel 怪獸卡池（共 9060 張），僅本機瀏覽器儲存進度，不會上傳。</footer>
+<footer>資料來源：Master Duel 怪獸卡池（共 9060 張），僅本機瀏覽器儲存進度，不會上傳。<span id="versionTag" style="margin-left:8px;"></span></footer>
 
 <script>
 (function(){
@@ -545,6 +545,10 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
     remainingGuesses: null,
     remainingHints: null
   };
+
+  // 每次發布時手動更新這個時間戳（台灣時間），問題回饋會自動帶上這個版本，
+  // 方便回報時判斷對方是不是還沒更新到已修好的版本。
+  var TOOL_VERSION = "2026-09-26 10:31";
 
   var CARDS = [];
   var byId = {};
@@ -1266,6 +1270,7 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
   function buildToolStateSummary(){
     var ec = effectiveConstraints();
     var lines = [];
+    lines.push("工具版本：" + TOOL_VERSION);
     lines.push("回合：第 " + state.round + " 題");
     var knownParts = FIELDS.map(function(f){
       return ec.known[f] !== undefined ? (FIELD_NAMES[f] + "=" + ec.known[f]) : null;
@@ -1312,6 +1317,8 @@ footer{ text-align:center; color:var(--text-faint); font-size:0.76rem; margin-to
     setupThemeToggle();
     setupFontControl();
     loadState();
+    var vt = document.getElementById("versionTag");
+    if(vt) vt.textContent = "・版本 " + TOOL_VERSION;
     fetch("cards.json").then(function(r){ return r.json(); }).then(function(data){
       data.forEach(function(c){ c.isPendulum = isPendulumCard(c.type); c.type = normalizeGameType(c.type); });
       CARDS = data;
